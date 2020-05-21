@@ -1,8 +1,10 @@
 const arg = require("minimist");
-let config = arg;
 const path = require("path");
+
+let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
-require("dotenv").config({ path: envFile });
+
+try { require("dotenv").config({ path: envFile }); } catch { }
 
 try {
 	let conf = require(require("path").join(__dirname, "config.json"));
