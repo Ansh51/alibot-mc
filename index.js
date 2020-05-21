@@ -123,6 +123,7 @@ function init(r) {
 			u = m.split(" ")[0];
 			if (m.split(": ")[1] === undefined) {
 				console.log(`${u} empty message`);
+				return false;
 			}
 			m = m.split(": ")[1];
 			console.log(`${u} -> ${m}`);
