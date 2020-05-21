@@ -105,6 +105,7 @@ function init(r) {
 		);
 		bot.on("tpa", (u, m, t, rm) => {
 			let user = m.extra[0].text;
+			console.log(user + " tpa");
 			if (op.includes(user) || mode !== "private") {
 				send("/msg " + user + " Accepting...");
 				send("/tpy " + user);
@@ -120,6 +121,9 @@ function init(r) {
 		bot.on("msg", (u, m, t, rm) => {
 			m = m.extra[0].text.trim();
 			u = m.split(" ")[0];
+			if (m.split(": ")[1] === undefined) {
+				console.log(`${u} empty message`);
+			}
 			m = m.split(": ")[1];
 			console.log(`${u} -> ${m}`);
 			let args = m.split(" ");
