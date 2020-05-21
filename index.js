@@ -148,7 +148,11 @@ function init(r) {
 					msg(op.join(", "), u);
 				}
 			} else if (m.startsWith("coords")) {
-				msg("My coords are: " + [bot.player.entity.position.x, bot.player.entity.position.y, bot.player.entity.position.z].join(" "), u);
+				if (op.includes(u) || mode === "public") {
+					msg("My coords are: " + [bot.player.entity.position.x, bot.player.entity.position.y, bot.player.entity.position.z].join(" "), u);
+				} else {
+					msg("You are not an operator and the mode is " + mode + ".", u);
+				}
 			} else if (m.startsWith("discord")) {
 				msg("Under construction.", u);
 			} else if (m.startsWith("ping")) {
