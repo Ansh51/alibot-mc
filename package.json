@@ -7,7 +7,9 @@
 		"start": "node index.js"
 	},
 	"dependencies": {
+		"dotenv": "^8.2.0",
 		"mineflayer": "^2.15.0",
+		"minimist": "^1.2.5",
 		"prismarine-nbt": "^1.2.1",
 		"readline-sync": "^1.4.10"
 	},

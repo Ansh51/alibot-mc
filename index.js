@@ -1,21 +1,23 @@
-let config = {
-	WEBSITE: "http://alibot.ml/"
-};
-if (process.env.CONF_ENVMODE) {
-	config.HOST = process.env.CONF_HOST;
-	config.USERNAME = process.env.CONF_USERNAME;
-	config.PASSWORD = process.env.CONF_PASSWORD;
-	config.OP = process.env.CONF_OP;
-	config.MODE = process.env.CONF_MODE;
-	config.ACTIVE = process.env.CONF_ACTIVE;
-} else if () {
+const arg = require("minimist");
+let config = arg;
+const path = require("path");
+let envFile = path.join(__dirname, arg.e || arg.env || ".env");
+require("dotenv").config({ path: envFile });
 
-} else {
-	try { config = require(require("path").join(__dirname, "config.json")); } catch {
-		console.log("Run setup.js and try again.");
-		process.exit(0);
-	}
+try {
+	let conf = require(require("path").join(__dirname, "config.json"));
+	config.WEBSITE = arg.w || process.env.CONF_WEBSITE || conf.WEBSITE || "http://alibot.ml"; // You probably shouldn't change this.
+	config.HOST = arg.h || process.env.CONF_HOST || conf.HOST || "0b0t.org";
+	config.USERNAME = arg.u || process.env.CONF_USERNAME || conf.USERNAME || "alibot";
+	config.PASSWORD = arg.p || process.env.CONF_PASSWORD || conf.PASSWORD || false;
+	config.OP = arg.o || process.env.CONF_OP || conf.OP || "AliFurkan";
+	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
+	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.active || "true";
+} catch {
+	console.log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
+	process.exit(1);
 }
+
 
 const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE);
 if (!isVarSet()) {
