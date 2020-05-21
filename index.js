@@ -109,7 +109,6 @@ function init(r) {
 			let user = m.extra[0].text;
 			console.log(user + " tpa");
 			if (op.includes(user) || mode !== "private") {
-				send("/msg " + user + " Accepting...");
 				send("/tpy " + user);
 			} else {
 				send(
@@ -142,14 +141,14 @@ function init(r) {
 						u
 					);
 			} else if (m.startsWith("op")) {
-				if (op.includes(u)) {
+				if (op.includes(u) && args.length >= 1) {
 					op.push(args[0]);
 					msg(`Opped ${args[0]}`, u);
 				} else {
-					msg("You can't OP people.", u);
+					msg(op.join(", "), u);
 				}
-			} else if (m.startsWith("listop")) {
-				msg(op.join(","), u);
+			} else if (m.startsWith("coords")) {
+				msg("My coords are: " + [bot.entity.location.x, bot.entity.location.y, bot.entity.location.z].join(" "), u);
 			} else if (m.startsWith("discord")) {
 				msg("Under construction.", u);
 			} else if (m.startsWith("ping")) {
@@ -159,12 +158,12 @@ function init(r) {
 					msg(`Your ping is ${bot.players[u].ping}ms.`, u);
 				}
 			} else if (m.startsWith("mode")) {
-				op.includes(u) && args.length >= 1
-					? msg(
-						`Changing the mode to ${args[0]}.`,
-						u
-					) && (mode = args[0])
-					: msg(`The mode is ${mode}`, u);
+				if (op.includes(u) && args.length >= 1) {
+					msg(`Changing the mode to ${args[0]}.`, u);
+					mode = args[0];
+				} else {
+					msg(`The mode is ${mode}`, u);
+				}
 			} else if (m.startsWith("reinit")) {
 				op.includes(u) ? init("reinit") : msg("You are not an operator.", u);
 			} else if (m.startsWith("random")) {
