@@ -1,4 +1,8 @@
-let config = require(require("path").join(__dirname, "config.json"));
+let config;
+try { config = require(require("path").join(__dirname, "config.json")); } catch {
+	console.log("Run setup.js and try again.");
+	process.exit(0);
+}
 const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.WEBSITE);
 if (!isVarSet()) {
 	console.log("Run setup.js and try again.");
