@@ -1,9 +1,23 @@
-let config;
-try { config = require(require("path").join(__dirname, "config.json")); } catch {
-	console.log("Run setup.js and try again.");
-	process.exit(0);
+let config = {
+	WEBSITE: "http://alibot.ml/"
+};
+if (process.env.CONF_ENVMODE) {
+	config.HOST = process.env.CONF_HOST;
+	config.USERNAME = process.env.CONF_USERNAME;
+	config.PASSWORD = process.env.CONF_PASSWORD;
+	config.OP = process.env.CONF_OP;
+	config.MODE = process.env.CONF_MODE;
+	config.ACTIVE = process.env.CONF_ACTIVE;
+} else if () {
+
+} else {
+	try { config = require(require("path").join(__dirname, "config.json")); } catch {
+		console.log("Run setup.js and try again.");
+		process.exit(0);
+	}
 }
-const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.WEBSITE);
+
+const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE);
 if (!isVarSet()) {
 	console.log("Run setup.js and try again.");
 	process.exit(0);
