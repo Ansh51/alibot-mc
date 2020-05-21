@@ -1,0 +1,21 @@
+{
+	"name": "alibot",
+	"version": "0.0.1",
+	"description": "Minecraft Bot",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"mineflayer": "^2.15.0",
+		"prismarine-nbt": "^1.2.1",
+		"readline-sync": "^1.4.10"
+	},
+	"engines": {
+		"node": "12.x"
+	},
+	"license": "GPL-3.0",
+	"keywords": [
+		"minecraft"
+	]
+}
