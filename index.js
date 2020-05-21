@@ -148,7 +148,7 @@ function init(r) {
 					msg(op.join(", "), u);
 				}
 			} else if (m.startsWith("coords")) {
-				msg("My coords are: " + [bot.entity.location.x, bot.entity.location.y, bot.entity.location.z].join(" "), u);
+				msg("My coords are: " + [bot.player.entity.location.x, bot.player.entity.location.y, bot.player.entity.location.z].join(" "), u);
 			} else if (m.startsWith("discord")) {
 				msg("Under construction.", u);
 			} else if (m.startsWith("ping")) {
