@@ -96,12 +96,12 @@ function init(r) {
 		// bot.on("", (u, m, t, rm) => {});
 		username = bot.player.username;
 		bot.chatAddPattern(
-			/^[a-zA-Z_]{3,16} wants to teleport to you\.$/,
+			/^[a-zA-Z0-9_]{3,16} wants to teleport to you\.$/,
 			"tpa",
 			"received tpa"
 		);
 		bot.chatAddPattern(
-			/^[a-zA-Z_]{3,16} whispers: /,
+			/^[a-zA-Z0-9_]{3,16} whispers: /,
 			"msg",
 			"received msg"
 		);
