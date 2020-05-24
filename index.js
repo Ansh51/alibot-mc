@@ -91,10 +91,10 @@ function init(r) {
 	start = Date.now();
 
 	function main() {
-		console.log("Spawned.");
+		username = bot.player.username;
+		console.log("Spawned. Username: " + username);
 		// send("/msg " + op[0] + " Logged in.");
 		// bot.on("", (u, m, t, rm) => {});
-		username = bot.player.username;
 		bot.chatAddPattern(
 			/^[a-zA-Z0-9_]{3,16} wants to teleport to you\.$/,
 			"tpa",
@@ -132,6 +132,8 @@ function init(r) {
 			args.shift();
 			if (m.startsWith("help")) {
 				msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
+			} else if (m.startsWith("tphere")) {
+				send("/tpa " + u);
 			} else if (m.startsWith("kill")) {
 				op.includes(u) ||
 					(Date.now() >= lastkill + 15 * 1000 && mode !== "private")
