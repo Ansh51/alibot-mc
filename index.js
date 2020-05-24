@@ -37,7 +37,7 @@ function send(msg = "/help") {
 }
 
 function msg(msg, u) {
-	send("/msg " + u + " " + msg);
+	send(`/msg ${u} ${msg}`);
 }
 
 function randStr(length) {
@@ -93,7 +93,7 @@ function init(r) {
 	function main() {
 		username = bot.player.username;
 		console.log("Spawned. Username: " + username);
-		// send("/msg " + op[0] + " Logged in.");
+		// send(`/msg " + op[0] + " Logged in.");
 		// bot.on("", (u, m, t, rm) => {});
 		bot.chatAddPattern(
 			/^[a-zA-Z0-9_]{3,16} wants to teleport to you\.$/,
@@ -109,14 +109,10 @@ function init(r) {
 			let user = m.extra[0].text;
 			console.log(user + " tpa");
 			if (op.includes(user) || mode !== "private") {
-				send("/tpy " + user);
+				send(`/tpy ${user}`);
 			} else {
-				send(
-					"/msg " +
-					user +
-					" Declining! You are not in the operators list and the mode is private."
-				);
-				send("/tpn " + user);
+				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, u);
+				send(`/tpn ${user}`);
 			}
 		});
 		bot.on("msg", (u, m, t, rm) => {
@@ -134,14 +130,14 @@ function init(r) {
 				msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
 			} else if (m.startsWith("tphere")) {
 				if (op.includes(u) || mode === "public") {
-					send("/tpa " + u);
+					send(`/tpa ` + u);
 				} else {
 					msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
 				}
 			} else if (m.startsWith("kill")) {
 				op.includes(u) ||
 					(Date.now() >= lastkill + 15 * 1000 && mode !== "private")
-					? send("/kill")
+					? send(`/kill`)
 					: msg(
 						`Declining! You're not an operator and the mode is ${mode}.`,
 						u
@@ -155,12 +151,12 @@ function init(r) {
 				}
 			} else if (m.startsWith("coords")) {
 				if (op.includes(u) || mode === "public") {
-					msg("My coords are: " + [bot.player.entity.position.x, bot.player.entity.position.y, bot.player.entity.position.z].join(" "), u);
+					msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u);
 				} else {
-					msg("You are not an operator and the mode is " + mode + ".", u);
+					msg(`You are not an operator and the mode is ${mode}.`, u);
 				}
 			} else if (m.startsWith("discord")) {
-				msg("Under construction.", u);
+				msg(`Under construction.`, u);
 			} else if (m.startsWith("ping")) {
 				if (args.length >= 1) {
 					msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u);
@@ -175,7 +171,11 @@ function init(r) {
 					msg(`The mode is ${mode}`, u);
 				}
 			} else if (m.startsWith("reinit")) {
-				op.includes(u) ? init("reinit") : msg("You are not an operator.", u);
+				if (op.includes(u)) {
+					init("reinit")
+				} else {
+					msg(`You are not an operator.`, u);
+				}
 			} else if (m.startsWith("random")) {
 				if (args.length === 0) {
 					msg(`Usage: random [dice|number <min> <max>]`, u);
@@ -196,6 +196,12 @@ function init(r) {
 					}
 				} else if (args[0] === "dice") {
 					msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
+				}
+			} else if (m.startsWith("say")) {
+				if (op.includes(u)) {
+					say(args[0]);
+				} else {
+					msg(`You are not an operator.`, u);
 				}
 			}
 		});
