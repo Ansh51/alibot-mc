@@ -132,7 +132,9 @@ function init(r) {
 				console.log(`${u} empty message`);
 				return false;
 			}
-			m = m.split(": ")[1];
+			m = m.split(": ");
+			m.shift();
+			m = m.join(": ");
 			console.log(`${u} -> ${m}`);
 			let args = m.split(" ");
 			args.shift();
