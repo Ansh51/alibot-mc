@@ -133,9 +133,9 @@ function init(r) {
 			console.log(`${u} -> ${m}`);
 			let args = m.split(" ");
 			args.shift();
-			let rm = m;
+			let oldm = m;
 			m = m.split(" ")[0];
-			handleCommand(m, u, args, rm);
+			handleCommand(m, u, args, oldm);
 		});
 		try {
 			rl.on("line", (m) => {
