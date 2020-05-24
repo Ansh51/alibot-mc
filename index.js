@@ -133,7 +133,11 @@ function init(r) {
 			if (m.startsWith("help")) {
 				msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
 			} else if (m.startsWith("tphere")) {
-				send("/tpa " + u);
+				if (op.includes(u) || mode === "public") {
+					send("/tpa " + u);
+				} else {
+					msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
+				}
 			} else if (m.startsWith("kill")) {
 				op.includes(u) ||
 					(Date.now() >= lastkill + 15 * 1000 && mode !== "private")
