@@ -31,6 +31,12 @@ if (config.ACTIVE === "false") {
 }
 
 const mineflayer = require("mineflayer");
+const readline = require('readline');
+
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
 
 function send(msg = "/help") {
 	toSend.push(msg);
@@ -92,6 +98,7 @@ function init(r) {
 
 	function main() {
 		username = bot.player.username;
+		op.push(username);
 		console.log("Spawned. Username: " + username);
 		// send(`/msg " + op[0] + " Logged in.");
 		// bot.on("", (u, m, t, rm) => {});
@@ -126,85 +133,26 @@ function init(r) {
 			console.log(`${u} -> ${m}`);
 			let args = m.split(" ");
 			args.shift();
-			if (m.startsWith("help")) {
-				msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
-			} else if (m.startsWith("tphere")) {
-				if (op.includes(u) || mode === "public") {
-					send(`/tpa ` + u);
-				} else {
-					msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
-				}
-			} else if (m.startsWith("kill")) {
-				op.includes(u) ||
-					(Date.now() >= lastkill + 15 * 1000 && mode !== "private")
-					? send(`/kill`)
-					: msg(
-						`Declining! You're not an operator and the mode is ${mode}.`,
-						u
-					);
-			} else if (m.startsWith("op")) {
-				if (op.includes(u) && args.length >= 1) {
-					op.push(args[0]);
-					msg(`Opped ${args[0]}`, u);
-				} else {
-					msg(op.join(", "), u);
-				}
-			} else if (m.startsWith("coords")) {
-				if (op.includes(u) || mode === "public") {
-					msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u);
-				} else {
-					msg(`You are not an operator and the mode is ${mode}.`, u);
-				}
-			} else if (m.startsWith("discord")) {
-				msg(`Under construction.`, u);
-			} else if (m.startsWith("ping")) {
-				if (args.length >= 1) {
-					msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u);
-				} else {
-					msg(`Your ping is ${bot.players[u].ping}ms.`, u);
-				}
-			} else if (m.startsWith("mode")) {
-				if (op.includes(u) && args.length >= 1) {
-					msg(`Changing the mode to ${args[0]}.`, u);
-					mode = args[0];
-				} else {
-					msg(`The mode is ${mode}`, u);
-				}
-			} else if (m.startsWith("reinit")) {
-				if (op.includes(u)) {
-					init("reinit")
-				} else {
-					msg(`You are not an operator.`, u);
-				}
-			} else if (m.startsWith("random")) {
-				if (args.length === 0) {
-					msg(`Usage: random [dice|number <min> <max>]`, u);
-				} else if (args[0] === "number") {
-					if (args.length >= 4) {
-						if (parseInt(args[1]) !== NaN && parseInt(args[2]) !== NaN) {
-							let nums = [parseInt(args[1]), parseInt(args[2])];
-							if (nums[1] > nums[0]) {
-								msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u);
-							} else {
-								msg(`Minimum is larger than maximum.`, u);
-							}
-						} else {
-							msg(`You did not provide a number.`, u);
-						}
-					} else {
-						msg(`Usage: random [dice|number <min> <max>]`, u);
-					}
-				} else if (args[0] === "dice") {
-					msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
-				}
-			} else if (m.startsWith("say")) {
-				if (op.includes(u)) {
-					say(args[0]);
-				} else {
-					msg(`You are not an operator.`, u);
-				}
-			}
+			let rm = m;
+			m = m.split(" ")[0];
+			handleCommand(m, u, args, rm);
 		});
+		try {
+			rl.on("line", (m) => {
+				m = m.trim();
+				u = username;
+				if (m.length === 0) {
+					console.log(`${u} empty message`);
+					return false;
+				}
+				console.log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				handleCommand(m, u, args, rm);
+			});
+		} catch { }
 	}
 	bot.once("spawn", main);
 	bot._client.once("session", () => {
@@ -225,4 +173,98 @@ function init(r) {
 		}
 	});
 }
+
+function handleCommand(m, u, args, rm = "") {
+	switch (m) {
+		case "help":
+			msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
+			break;
+		case "kill":
+			if (op.includes(u) ||
+				(Date.now() >= lastkill + 15 * 1000 && mode !== "private")) {
+				send(`/kill`);
+			} else {
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
+			}
+			break;
+		case "tphere":
+			if (op.includes(u) || mode === "public") {
+				args.length === 1 ? send(`/tpa ${args[0]}`) : send(`/tpa ${u}`);
+			} else {
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
+			}
+			break;
+		case "say":
+			if (op.includes(u)) {
+				say(args[0]);
+			} else {
+				msg(`You are not an operator.`, u);
+			}
+			break;
+		case "op":
+			if (op.includes(u) && args.length >= 1) {
+				op.push(args[0]);
+				msg(`Opped ${args[0]}`, u);
+			} else {
+				msg(op.join(", "), u);
+			}
+			break;
+		case "coords":
+			if (op.includes(u) || mode !== "private") {
+				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u);
+			} else {
+				msg(`You are not an operator and the mode is ${mode}.`, u);
+			}
+			break;
+		case "discord":
+			msg(`Under construction.`, u);
+			break;
+		case "ping":
+			if (args.length >= 1) {
+				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u);
+			} else {
+				msg(`Your ping is ${bot.players[u].ping}ms.`, u);
+			}
+			break;
+		case "mode":
+			if (op.includes(u) && args.length >= 1) {
+				msg(`Changing the mode to ${args[0]}.`, u);
+				mode = args[0];
+			} else {
+				msg(`The mode is ${mode}`, u);
+			}
+			break;
+		case "reinit":
+			if (op.includes(u)) {
+				init("reinit")
+			} else {
+				msg(`You are not an operator.`, u);
+			}
+			break;
+		case "random":
+			if (args.length === 0) {
+				msg(`Usage: random [dice|number <min> <max>]`, u);
+			} else if (args[0] === "number") {
+				if (args.length >= 4) {
+					if (parseInt(args[1]) !== NaN && parseInt(args[2]) !== NaN) {
+						let nums = [parseInt(args[1]), parseInt(args[2])];
+						if (nums[1] > nums[0]) {
+							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u);
+						} else {
+							msg(`Minimum is larger than maximum.`, u);
+						}
+					} else {
+						msg(`You did not provide a number.`, u);
+					}
+				} else {
+					msg(`Usage: random [dice|number <min> <max>]`, u);
+				}
+			} else if (args[0] === "dice") {
+				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
+			}
+			break;
+	}
+
+}
+
 init("First Start");
