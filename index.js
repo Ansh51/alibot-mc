@@ -84,10 +84,12 @@ let login = {
 let version = "0.0.1";
 let mode = config.MODE;
 let firstchat = true;
+let spawned = false;
 
 let bot;
 
 function init(r) {
+	spawned = false;
 	console.log(`[${Date.now()}] Init ${r}`);
 	bot = mineflayer.createBot(login);
 
@@ -97,6 +99,7 @@ function init(r) {
 	start = Date.now();
 
 	function main() {
+		spawned = true;
 		username = bot.player.username;
 		op.push(username);
 		console.log("Spawned. Username: " + username);
@@ -137,22 +140,7 @@ function init(r) {
 			m = m.split(" ")[0];
 			handleCommand(m, u, args, oldm);
 		});
-		try {
-			rl.on("line", (m) => {
-				m = m.trim();
-				u = username;
-				if (m.length === 0) {
-					console.log(`${u} empty message`);
-					return false;
-				}
-				console.log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm);
-			});
-		} catch { }
+
 	}
 	bot.once("spawn", main);
 	bot._client.once("session", () => {
@@ -196,7 +184,7 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "say":
 			if (op.includes(u)) {
-				send(args[0]);
+				send(args.join(" "));
 			} else {
 				msg(`You are not an operator.`, u);
 			}
@@ -268,3 +256,22 @@ function handleCommand(m, u, args, rm = "") {
 }
 
 init("First Start");
+
+try {
+	rl.on("line", (m) => {
+		if (spawned) {
+			m = m.trim();
+			u = username;
+			if (m.length === 0) {
+				console.log(`${u} empty message`);
+				return false;
+			}
+			console.log(`${u} -> ${m}`);
+			let args = m.split(" ");
+			args.shift();
+			let rm = m;
+			m = m.split(" ")[0];
+			handleCommand(m, u, args, rm);
+		}
+	});
+} catch { }
