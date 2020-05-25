@@ -220,7 +220,7 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "say":
 			if (op.includes(u)) {
-				send(old.substr(4));
+				send(rm.substr(4));
 			} else {
 				msg(`You are not an operator.`, u);
 			}
