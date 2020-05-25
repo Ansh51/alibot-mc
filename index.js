@@ -89,6 +89,33 @@ let spawned = false;
 
 let bot;
 
+function goToSleep(u) {
+	const bed = bot.findBlock({
+		matching: block => bot.isABed(block)
+	})
+	if (bed) {
+		bot.sleep(bed, (err) => {
+			if (err) {
+				msg(`I can't sleep: ${err.message}`, u);
+			} else {
+
+			}
+		})
+	} else {
+		msg(`No nearby bed`, u);
+	}
+}
+
+function wakeUp(u) {
+	bot.wake((err) => {
+		if (err) {
+			msg(`I can't wake up: ${err.message}`, u);
+		} else {
+
+		}
+	})
+}
+
 function init(r) {
 	spawned = false;
 	console.log(`[${Date.now()}] Init ${r}`);
@@ -163,6 +190,13 @@ function init(r) {
 			setTimeout(() => init("Error"), 10 * 60 * 1000);
 		}
 	});
+	bot.on('sleep', () => {
+		console.log(`SLEEPING`);
+		wakeUp();
+	})
+	bot.on('wake', () => {
+		console.log(`WOKE UP`);
+	})
 }
 
 function handleCommand(m, u, args, rm = "") {
@@ -253,6 +287,9 @@ function handleCommand(m, u, args, rm = "") {
 			} else if (args[0] === "dice") {
 				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
 			}
+			break;
+		case "sleep":
+			goToSleep();
 			break;
 	}
 
