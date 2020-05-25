@@ -192,7 +192,6 @@ function init(r) {
 	});
 	bot.on('sleep', () => {
 		console.log(`SLEEPING`);
-		wakeUp();
 	})
 	bot.on('wake', () => {
 		console.log(`WOKE UP`);
@@ -289,7 +288,10 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "sleep":
-			goToSleep();
+			goToSleep(u);
+			break;
+		case "wakeup":
+			wakeUp(u);
 			break;
 	}
 
