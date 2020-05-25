@@ -1,23 +1,33 @@
 {
-	"name": "alibot",
-	"version": "0.0.1",
-	"description": "Minecraft Bot",
-	"main": "index.js",
-	"scripts": {
-		"start": "node index.js"
-	},
-	"dependencies": {
-		"dotenv": "^8.2.0",
-		"mineflayer": "^2.15.0",
-		"minimist": "^1.2.5",
-		"prismarine-nbt": "^1.2.1",
-		"readline-sync": "^1.4.10"
-	},
-	"engines": {
-		"node": "12.x"
-	},
-	"license": "GPL-3.0",
-	"keywords": [
-		"minecraft"
-	]
+  "name": "alibot",
+  "version": "0.1.0",
+  "description": "Minecraft Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "mineflayer": "^2.15.0",
+    "minimist": "^1.2.5",
+    "prismarine-nbt": "^1.2.1",
+    "readline-sync": "^1.4.10"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "license": "GPL-3.0",
+  "keywords": [
+    "minecraft"
+  ],
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uAliFurkanY/alibot-mc.git"
+  },
+  "author": "Ali Furkan YILDIZ",
+  "bugs": {
+    "url": "https://github.com/uAliFurkanY/alibot-mc/issues"
+  },
+  "homepage": "https://github.com/uAliFurkanY/alibot-mc#readme"
 }

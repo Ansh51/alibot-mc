@@ -68,6 +68,7 @@ let toSend = [];
 setInterval(() => {
 	if (toSend.length !== 0 && Date.now() >= start + 15 * 1000) {
 		bot.chat(toSend[0]);
+		console.log(`[SENT] ${toSend[0]}`);
 		toSend.shift();
 	}
 }, 1500);
