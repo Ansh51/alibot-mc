@@ -302,23 +302,11 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "parse":
 			parse(u, args);
-		case "loopParse":
-			msg(setInterval(() => parse(u, args, true), parseInt(args[0]) || 0), u);
-		case "endLoop":
-			if (op.includes(u)) {
-				if (parseInt(args[0]) || false) {
-					clearInterval(parseInt(args[0]));
-				} else {
-					msg(`"${args[0] || ""}" is not a number.`);
-				}
-			} else {
-				msg(`You are not an operator.`, u);
-			}
 	}
 
 }
 
-function parse(u, args, loop = false) {
+function parse(u, args) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
@@ -326,13 +314,12 @@ function parse(u, args, loop = false) {
 					let output;
 					if (fs.existsSync(args[1])) {
 						loadFile(args[1]) || "No output."
-						!loop ? msg(`Done: ${output}`, u) : false;
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
 						output = loadFile(path.join(__dirname, args[1])) || "No output.";
-						!loop ? msg(`Done: ${output}`, u) : false;
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
+					msg(`Done: ${output}`, u);
 					log(output);
 				}
 				else if (args[0] === "web") {
