@@ -302,8 +302,10 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "parse":
 			parse(u, args);
-		/*case "parseLoop":
-			parse(u, args, true, args[0] || 0);*/
+		case "spam":
+			parse(u, args, true, args[0] || 0);
+		case "stopLoop":
+			clearInterval(args[0] || 0);
 	}
 
 }
