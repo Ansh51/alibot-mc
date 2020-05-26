@@ -1,5 +1,7 @@
 const arg = require("minimist");
 const path = require("path");
+const fs = require("fs");
+const os = require("os");
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
@@ -16,14 +18,14 @@ try {
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.active || "true";
 } catch {
-	console.log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
+	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
 	process.exit(1);
 }
 
 
 const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE);
 if (!isVarSet()) {
-	console.log("Run setup.js and try again.");
+	log("Run setup.js and try again.");
 	process.exit(0);
 }
 if (config.ACTIVE === "false") {
@@ -38,27 +40,9 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
-function send(msg = "/help") {
-	toSend.push(msg);
-}
-
-function msg(msg, u) {
-	send(`/msg ${u} ${msg}`);
-}
-
-function randStr(length) {
-	let result = "";
-	let characters =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	let charactersLength = characters.length;
-	for (let i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}
 
 let op = config.OP.split(",");
-console.log("Operators: " + op);
+log("Operators: " + op);
 
 let lastkill = Date.now();
 let start = Date.now();
@@ -68,7 +52,7 @@ let toSend = [];
 setInterval(() => {
 	if (toSend.length !== 0 && Date.now() >= start + 15 * 1000) {
 		bot.chat(toSend[0]);
-		console.log(`[SENT] ${toSend[0]}`);
+		log(toSend[0], true);
 		toSend.shift();
 	}
 }, 1500);
@@ -88,6 +72,29 @@ let firstchat = true;
 let spawned = false;
 
 let bot;
+
+function log(message, sent = false, date = new Date(Date.now())) {
+	console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`);
+}
+
+function send(msg = "/help") {
+	toSend.push(msg);
+}
+
+function msg(msg, u) {
+	send(`/msg ${u} ${msg}`);
+}
+
+function randStr(length) {
+	let result = "";
+	let characters =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	let charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
 
 function goToSleep(u) {
 	const bed = bot.findBlock({
@@ -118,7 +125,7 @@ function wakeUp(u) {
 
 function init(r) {
 	spawned = false;
-	console.log(`[${Date.now()}] Init ${r}`);
+	log(`[${Date.now()}] Init ${r}`);
 	bot = mineflayer.createBot(login);
 
 	toSend = [];
@@ -130,7 +137,7 @@ function init(r) {
 		spawned = true;
 		username = bot.player.username;
 		op.push(username);
-		console.log("Spawned. Username: " + username);
+		log("Spawned. Username: " + username);
 		// send(`/msg " + op[0] + " Logged in.");
 		// bot.on("", (u, m, t, rm) => {});
 		bot.chatAddPattern(
@@ -145,7 +152,7 @@ function init(r) {
 		);
 		bot.on("tpa", (u, m, t, rm) => {
 			let user = m.extra[0].text;
-			console.log(user + " tpa");
+			log(user + " tpa");
 			if (op.includes(user) || mode !== "private") {
 				send(`/tpy ${user}`);
 			} else {
@@ -157,13 +164,13 @@ function init(r) {
 			m = m.extra[0].text.trim();
 			u = m.split(" ")[0];
 			if (m.split(": ")[1] === undefined) {
-				console.log(`${u} empty message`);
+				log(`${u} empty message`);
 				return false;
 			}
 			m = m.split(": ");
 			m.shift();
 			m = m.join(": ");
-			console.log(`${u} -> ${m}`);
+			log(`${u} -> ${m}`);
 			let args = m.split(" ");
 			args.shift();
 			let oldm = m;
@@ -177,7 +184,7 @@ function init(r) {
 		session = bot._client.session;
 		login.session = session;
 	});
-	bot.once("login", () => console.log("Logged in."));
+	bot.once("login", () => log("Logged in."));
 	bot.once("kick", () => init("Kick"));
 	bot.once("end", () => setTimeout(() => init("End"), 10 * 1000));
 	bot.once("error", (m) => {
@@ -191,10 +198,10 @@ function init(r) {
 		}
 	});
 	bot.on('sleep', () => {
-		console.log(`SLEEPING`);
+		log(`SLEEPING`);
 	})
 	bot.on('wake', () => {
-		console.log(`WOKE UP`);
+		log(`WOKE UP`);
 	})
 }
 
@@ -288,13 +295,58 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "sleep":
-			goToSleep(u);
+			op.includes(u) ? goToSleep(u) : false;
 			break;
 		case "wakeup":
-			wakeUp(u);
+			op.includes(u) ? wakeUp(u) : false;
 			break;
+		case "parse":
+			if (op.includes(u)) {
+				if (args[0] === "web" || args[0] === "file") {
+					if (!!args[1]) {
+						if (args[0] === "file") {
+							if (fs.existsSync(args[0])) {
+								msg(`Done: ${loadFile(args[0]) || "No output."}`, u);
+							} else if (fs.existsSync(path.join(__dirname, args[0]))) {
+								msg(`Done: ${loadFile(fs.existsSync(path.join(__dirname, args[0]))) || "No output."}`, u);
+							} else {
+								msg(`Specified file doesn't exist.`, u);
+							}
+						}
+						else if (args[0] === "web") {
+							msg(`Web mode not yet implemented, please submit a PR if you have, as this will take long and I don't wanna start it.`, u);
+						}
+					} else {
+						msg(`No file/url specified.`);
+					}
+				} else {
+					msg(`Mode should be either 'web' or 'file'.`, u);
+				}
+			} else {
+				msg(`You are not an operator.`, u);
+			}
 	}
 
+}
+
+function loadFile(name = "") {
+	try {
+		name = name.trim();
+		let commands = [];
+		if (fs.existsSync(args[0])) {
+			commands = fs.readFileSync(name).split(os.EOL);
+		} else if (fs.existsSync(path.join(__dirname, name))) {
+			commands = fs.readFileSync(path.join(__dirname, name)).split(os.EOL);
+		} else {
+			return `Specified file doesn't exist.`;
+		}
+		return commands.map(cmd => {
+			cmd = cmd.trim();
+			return handleCommand(cmd, u);
+		}).join("; ");
+	} catch (e) {
+		return e.message;
+	}
 }
 
 init("First Start");
@@ -305,10 +357,10 @@ try {
 			m = m.trim();
 			u = username;
 			if (m.length === 0) {
-				console.log(`${u} empty message`);
+				log(`${u} empty message`);
 				return false;
 			}
-			console.log(`${u} -> ${m}`);
+			log(`${u} -> ${m}`);
 			let args = m.split(" ");
 			args.shift();
 			let rm = m;
