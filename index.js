@@ -305,10 +305,10 @@ function handleCommand(m, u, args, rm = "") {
 				if (args[0] === "web" || args[0] === "file") {
 					if (!!args[1]) {
 						if (args[0] === "file") {
-							if (fs.existsSync(args[0])) {
-								msg(`Done: ${loadFile(args[0]) || "No output."}`, u);
-							} else if (fs.existsSync(path.join(__dirname, args[0]))) {
-								msg(`Done: ${loadFile(path.join(__dirname, args[0])) || "No output."}`, u);
+							if (fs.existsSync(args[1])) {
+								msg(`Done: ${loadFile(args[1]) || "No output."}`, u);
+							} else if (fs.existsSync(path.join(__dirname, args[1]))) {
+								msg(`Done: ${loadFile(path.join(__dirname, args[1])) || "No output."}`, u);
 							} else {
 								msg(`Specified file doesn't exist.`, u);
 							}
