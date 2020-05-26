@@ -320,13 +320,13 @@ function parse(u, args, loop = false, delay = 0) {
 						if (!loop) {
 							output = loadFile(args[1]) || "No output."
 						} else {
-							output += setInterval(() => loadFile(args[1]), delay);
+							output += setInterval(() => loadFile(args[1]), delay).toString();
 						}
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
 						if (!loop) {
 							output = loadFile(path.join(__dirname, args[1])) || "No output.";
 						} else {
-							output += setInterval(() => loadFile(args[1]), delay);
+							output += setInterval(() => loadFile(args[1]), delay).toString();
 						}
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
