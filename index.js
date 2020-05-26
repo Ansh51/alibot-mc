@@ -305,7 +305,15 @@ function handleCommand(m, u, args, rm = "") {
 		case "loopParse":
 			parse(u, args, true, args[0] || undefined);
 		case "endLoop":
-			clear
+			if (op.includes(u)) {
+				if (parseInt(args[0]) || false) {
+					clearInterval(parseInt(args[0]));
+				} else {
+					msg(`"${args[0] || ""}" is not a number.`);
+				}
+			} else {
+				msg(`You are not an operator.`, u);
+			}
 	}
 
 }
