@@ -368,7 +368,7 @@ function loadFile(name = "", loop, delay) {
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
-			setTimeout(() => {
+			return setInterval(() => {
 				let m = commands[i % commands.length];
 				m = m.trim();
 				let u = username;
