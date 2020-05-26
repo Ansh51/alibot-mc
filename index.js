@@ -308,7 +308,7 @@ function handleCommand(m, u, args, rm = "") {
 							if (fs.existsSync(args[0])) {
 								msg(`Done: ${loadFile(args[0]) || "No output."}`, u);
 							} else if (fs.existsSync(path.join(__dirname, args[0]))) {
-								msg(`Done: ${loadFile(fs.existsSync(path.join(__dirname, args[0]))) || "No output."}`, u);
+								msg(`Done: ${loadFile(path.join(__dirname, args[0])) || "No output."}`, u);
 							} else {
 								msg(`Specified file doesn't exist.`, u);
 							}
@@ -338,7 +338,7 @@ function loadFile(name = "") {
 		} else if (fs.existsSync(path.join(__dirname, name))) {
 			commands = fs.readFileSync(path.join(__dirname, name)).split(os.EOL);
 		} else {
-			return `Specified file doesn't exist.`;
+			return `Specified file doesn't exist. (BUG)`;
 		}
 		return commands.map(cmd => {
 			cmd = cmd.trim();
