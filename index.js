@@ -302,20 +302,30 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "parse":
 			parse(u, args);
+		case "parseLoop":
+			parse(u, args, true, args[0] || 0);
 	}
 
 }
 
-function parse(u, args) {
+function parse(u, args, loop = false, delay = 0) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
-					let output;
+					let output = "Started, the loop ID is: ";
 					if (fs.existsSync(args[1])) {
-						loadFile(args[1]) || "No output."
+						if (!loop) {
+							output = loadFile(args[1]) || "No output."
+						} else {
+							output += setInterval(() => loadFile(args[1]), delay);
+						}
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadFile(path.join(__dirname, args[1])) || "No output.";
+						if (!loop) {
+							output = loadFile(path.join(__dirname, args[1])) || "No output.";
+						} else {
+							output += setInterval(() => loadFile(args[1]), delay);
+						}
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
