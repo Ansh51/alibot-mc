@@ -342,7 +342,7 @@ function loadFile(name = "") {
 		}
 		return commands.map(cmd => {
 			cmd = cmd.trim();
-			return handleCommand(cmd, u);
+			return handleCommand(cmd, username);
 		}).join("; ");
 	} catch (e) {
 		return e.message;
