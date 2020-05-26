@@ -303,7 +303,7 @@ function handleCommand(m, u, args, rm = "") {
 		case "parse":
 			parse(u, args);
 		case "spam":
-			parse(u, args, true, args[0] || 0);
+			parse(u, args, true, parseInt(args[2]) || 0);
 		case "stopLoop":
 			clearInterval(args[0] || 0);
 	}
