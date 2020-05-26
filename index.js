@@ -301,25 +301,25 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			parse(u, args);
+			parse(u, args, false, !args[2], !!args[3]);
 		case "spam":
-			parse(u, args, true, parseInt(args[2]) || 0);
+			parse(u, args, true, parseInt(args[2]) || 0, !args[3], !!args[4]);
 		case "stopLoop":
 			clearInterval(args[0] || 0);
 	}
 
 }
 
-function parse(u, args, loop = false, delay = 0) {
+function parse(u, args, loop = false, delay = 0, command = true, random = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadFile(args[1], loop, delay) || "No output."
+						output = loadFile(args[1], loop, delay, command, random) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadFile(path.join(__dirname, args[1]), loop, delay) || "No output.";
+						output = loadFile(path.join(__dirname, args[1]), loop, delay, command, random) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -340,7 +340,7 @@ function parse(u, args, loop = false, delay = 0) {
 	}
 }
 
-function loadFile(name = "", loop, delay) {
+function loadFile(name = "", loop, delay, command, random) {
 	try {
 		name = name.trim();
 		let commands = [];
@@ -371,19 +371,26 @@ function loadFile(name = "", loop, delay) {
 			return setInterval(() => {
 				let m = commands[i % commands.length];
 				m = m.trim();
-				let u = username;
-				if (m.length === 0) {
-					log(`${u} empty message`);
-					return false;
+				if (random) {
+					m += ` (${randStr("8")})`
 				}
-				log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm);
+				if (command) {
+					let u = username;
+					if (m.length === 0) {
+						log(`${u} empty message`);
+						return false;
+					}
+					log(`${u} -> ${m}`);
+					let args = m.split(" ");
+					args.shift();
+					let rm = m;
+					m = m.split(" ")[0];
+					handleCommand(m, u, args, rm);
+				} else {
+					send(m);
+				}
 				i++;
-			}, parseInt(delay) || 0);
+			}, parseInt(delay) || 0).toString();
 		}
 	} catch (e) {
 		return e.message;
