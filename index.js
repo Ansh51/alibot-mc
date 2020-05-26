@@ -333,7 +333,7 @@ function loadFile(name = "") {
 	try {
 		name = name.trim();
 		let commands = [];
-		if (fs.existsSync(args[0])) {
+		if (fs.existsSync(name)) {
 			commands = fs.readFileSync(name).split(os.EOL);
 		} else if (fs.existsSync(path.join(__dirname, name))) {
 			commands = fs.readFileSync(path.join(__dirname, name)).split(os.EOL);
