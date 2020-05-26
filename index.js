@@ -340,7 +340,7 @@ function parse(u, args, loop = false, delay = 0) {
 	}
 }
 
-function loadFile(name = "") {
+function loadFile(name = "", loop, delay) {
 	try {
 		name = name.trim();
 		let commands = [];
