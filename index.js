@@ -334,9 +334,9 @@ function loadFile(name = "") {
 		name = name.trim();
 		let commands = [];
 		if (fs.existsSync(name)) {
-			commands = fs.readFileSync(name).split(os.EOL);
+			commands = fs.readFileSync(name).toString().split(os.EOL);
 		} else if (fs.existsSync(path.join(__dirname, name))) {
-			commands = fs.readFileSync(path.join(__dirname, name)).split(os.EOL);
+			commands = fs.readFileSync(path.join(__dirname, name)).toString().split(os.EOL);
 		} else {
 			return `Specified file doesn't exist. (BUG)`;
 		}
