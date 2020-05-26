@@ -315,19 +315,11 @@ function parse(u, args, loop = false, delay = 0) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
-					let output = "Started, the loop ID is: ";
+					let output = "";
 					if (fs.existsSync(args[1])) {
-						if (!loop) {
-							output = loadFile(args[1]) || "No output."
-						} else {
-							output += setInterval(() => loadFile(args[1]), delay).toString();
-						}
+						output = loadFile(args[1], loop, delay) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						if (!loop) {
-							output = loadFile(path.join(__dirname, args[1])) || "No output.";
-						} else {
-							output += setInterval(() => loadFile(args[1]), delay).toString();
-						}
+						output = loadFile(path.join(__dirname, args[1]), loop, delay) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -359,20 +351,40 @@ function loadFile(name = "") {
 		} else {
 			return `Specified file doesn't exist. (BUG)`;
 		}
-		return commands.map(m => {
-			m = m.trim();
-			let u = username;
-			if (m.length === 0) {
-				log(`${u} empty message`);
-				return false;
-			}
-			log(`${u} -> ${m}`);
-			let args = m.split(" ");
-			args.shift();
-			let rm = m;
-			m = m.split(" ")[0];
-			return handleCommand(m, u, args, rm);
-		}).length + " command(s) ran.";
+		if (!loop) {
+			return commands.map(m => {
+				m = m.trim();
+				let u = username;
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
+				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				return handleCommand(m, u, args, rm);
+			}).length + " command(s) ran.";
+		} else {
+			let i = 0;
+			setTimeout(() => {
+				let m = commands[i % commands.length];
+				m = m.trim();
+				let u = username;
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
+				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				handleCommand(m, u, args, rm);
+				i++;
+			}, parseInt(delay) || 0);
+		}
 	} catch (e) {
 		return e.message;
 	}
