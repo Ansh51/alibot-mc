@@ -304,6 +304,8 @@ function handleCommand(m, u, args, rm = "") {
 			parse(u, args);
 		case "loopParse":
 			parse(u, args, true, args[0] || undefined);
+		case "endLoop":
+			clear
 	}
 
 }
@@ -379,7 +381,7 @@ function loadFileLoop(name = "", delay = 0) {
 		}
 		let i = 0;
 		return setInterval(() => {
-			let m = commands[i];
+			let m = commands[i % commands.length];
 			m = m.trim();
 			let u = username;
 			if (m.length === 0) {
