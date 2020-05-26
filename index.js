@@ -301,11 +301,11 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			parse(u, args, false, !args[2], !!args[3]);
+			parse(u, args, false, args[2] || true, args[3] || false);
 		case "spam":
-			parse(u, args, true, parseInt(args[2]) || 0, !args[3], !!args[4]);
+			parse(u, args, true, parseInt(args[2]) || 0, args[3] || true, args[4] || false);
 		case "stopLoop":
-			clearInterval(args[0] || 0);
+			op.includes(u) ? clearInterval(args[0] || 0) : msg(`You are not an operator, also this doesn't work, wth?`, u);
 	}
 
 }
@@ -396,8 +396,6 @@ function loadFile(name = "", loop, delay, command, random) {
 		return e.message;
 	}
 }
-
-
 
 init("First Start");
 
