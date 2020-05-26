@@ -321,15 +321,19 @@ function handleCommand(m, u, args, rm = "") {
 function parse(u, args, loop = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
-			if (!!args[1]) {
+			if (args[1]) {
 				if (args[0] === "file") {
+					let output;
 					if (fs.existsSync(args[1])) {
-						!loop ? msg(`Done: ${loadFile(args[1]) || "No output."}`, u) : loadFile(args[1]);
+						loadFile(args[1]) || "No output."
+						!loop ? msg(`Done: ${output}`, u) : false;
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						!loop ? msg(`Done: ${loadFile(path.join(__dirname, args[1])) || "No output."}`, u) : loadFile(path.join(__dirname, args[1])) || "No output.";
+						output = loadFile(path.join(__dirname, args[1])) || "No output.";
+						!loop ? msg(`Done: ${output}`, u) : false;
 					} else {
-						msg(`Specified file doesn't exist.`, u);
+						return msg(`Specified file doesn't exist.`, u);
 					}
+					log(output);
 				}
 				else if (args[0] === "web") {
 					msg(`Web mode not yet implemented, please submit a PR if you have, as this will take long and I don't wanna start it.`, u);
