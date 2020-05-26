@@ -301,32 +301,39 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			if (op.includes(u)) {
-				if (args[0] === "web" || args[0] === "file") {
-					if (!!args[1]) {
-						if (args[0] === "file") {
-							if (fs.existsSync(args[1])) {
-								msg(`Done: ${loadFile(args[1]) || "No output."}`, u);
-							} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-								msg(`Done: ${loadFile(path.join(__dirname, args[1])) || "No output."}`, u);
-							} else {
-								msg(`Specified file doesn't exist.`, u);
-							}
-						}
-						else if (args[0] === "web") {
-							msg(`Web mode not yet implemented, please submit a PR if you have, as this will take long and I don't wanna start it.`, u);
-						}
-					} else {
-						msg(`No file/url specified.`);
-					}
-				} else {
-					msg(`Mode should be either 'web' or 'file'.`, u);
-				}
-			} else {
-				msg(`You are not an operator.`, u);
-			}
+			parse(u, args);
+		case "loopParse":
+			parse(u, args, true, args[0] || undefined);
 	}
 
+}
+
+function parse(u, args, loop = false, delay = 0) {
+	let nextFunc = loop ? loadFileLoop : loadFile;
+	if (op.includes(u)) {
+		if (args[0] === "web" || args[0] === "file") {
+			if (!!args[1]) {
+				if (args[0] === "file") {
+					if (fs.existsSync(args[1])) {
+						msg(`Done: ${nextFunc(args[1]) || "No output."}`, u);
+					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
+						msg(`Done: ${nextFunc(path.join(__dirname, args[1])) || "No output."}`, u);
+					} else {
+						msg(`Specified file doesn't exist.`, u);
+					}
+				}
+				else if (args[0] === "web") {
+					msg(`Web mode not yet implemented, please submit a PR if you have, as this will take long and I don't wanna start it.`, u);
+				}
+			} else {
+				msg(`No file/url specified.`);
+			}
+		} else {
+			msg(`Mode should be either 'web' or 'file'.`, u);
+		}
+	} else {
+		msg(`You are not an operator.`, u);
+	}
 }
 
 function loadFile(name = "") {
@@ -354,6 +361,39 @@ function loadFile(name = "") {
 			m = m.split(" ")[0];
 			return handleCommand(m, u, args, rm);
 		}).length + " command(s) ran.";
+	} catch (e) {
+		return e.message;
+	}
+}
+
+function loadFileLoop(name = "", delay = 0) {
+	try {
+		name = name.trim();
+		let commands = [];
+		if (fs.existsSync(name)) {
+			commands = fs.readFileSync(name).toString().split(os.EOL);
+		} else if (fs.existsSync(path.join(__dirname, name))) {
+			commands = fs.readFileSync(path.join(__dirname, name)).toString().split(os.EOL);
+		} else {
+			return `Specified file doesn't exist. (BUG)`;
+		}
+		let i = 0;
+		return setInterval(() => {
+			let m = commands[i];
+			m = m.trim();
+			let u = username;
+			if (m.length === 0) {
+				log(`${u} empty message`);
+				return false;
+			}
+			log(`${u} -> ${m}`);
+			let args = m.split(" ");
+			args.shift();
+			let rm = m;
+			m = m.split(" ")[0];
+			handleCommand(m, u, args, rm);
+			i++;
+		}, delay);
 	} catch (e) {
 		return e.message;
 	}
