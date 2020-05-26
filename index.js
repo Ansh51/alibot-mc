@@ -303,7 +303,7 @@ function handleCommand(m, u, args, rm = "") {
 		case "parse":
 			parse(u, args);
 		case "loopParse":
-			parse(u, args, true, args[0] || undefined);
+			msg(setInterval(() => parse(u, args, true), parseInt(args[0]) || 0), u);
 		case "endLoop":
 			if (op.includes(u)) {
 				if (parseInt(args[0]) || false) {
@@ -318,16 +318,15 @@ function handleCommand(m, u, args, rm = "") {
 
 }
 
-function parse(u, args, loop = false, delay = 0) {
-	let nextFunc = loop ? loadFileLoop : loadFile;
+function parse(u, args, loop = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (!!args[1]) {
 				if (args[0] === "file") {
 					if (fs.existsSync(args[1])) {
-						msg(`Done: ${nextFunc(args[1]) || "No output."}`, u);
+						!loop ? msg(`Done: ${loadFile(args[1]) || "No output."}`, u) : loadFile(args[1]);
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						msg(`Done: ${nextFunc(path.join(__dirname, args[1])) || "No output."}`, u);
+						!loop ? msg(`Done: ${loadFile(path.join(__dirname, args[1])) || "No output."}`, u) : loadFile(path.join(__dirname, args[1])) || "No output.";
 					} else {
 						msg(`Specified file doesn't exist.`, u);
 					}
@@ -376,38 +375,7 @@ function loadFile(name = "") {
 	}
 }
 
-function loadFileLoop(name = "", delay = 0) {
-	try {
-		name = name.trim();
-		let commands = [];
-		if (fs.existsSync(name)) {
-			commands = fs.readFileSync(name).toString().split(os.EOL);
-		} else if (fs.existsSync(path.join(__dirname, name))) {
-			commands = fs.readFileSync(path.join(__dirname, name)).toString().split(os.EOL);
-		} else {
-			return `Specified file doesn't exist. (BUG)`;
-		}
-		let i = 0;
-		return setInterval(() => {
-			let m = commands[i % commands.length];
-			m = m.trim();
-			let u = username;
-			if (m.length === 0) {
-				log(`${u} empty message`);
-				return false;
-			}
-			log(`${u} -> ${m}`);
-			let args = m.split(" ");
-			args.shift();
-			let rm = m;
-			m = m.split(" ")[0];
-			handleCommand(m, u, args, rm);
-			i++;
-		}, delay);
-	} catch (e) {
-		return e.message;
-	}
-}
+
 
 init("First Start");
 
