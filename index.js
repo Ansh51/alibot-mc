@@ -352,8 +352,7 @@ function loadFile(name = "") {
 			args.shift();
 			let rm = m;
 			m = m.split(" ")[0];
-			handleCommand(m, u, args, rm);
-			return handleCommand(cmd, username);
+			return handleCommand(m, u, args, rm);
 		}).length - 1 + " Command Ran.";
 	} catch (e) {
 		return e.message;
