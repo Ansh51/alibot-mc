@@ -49,6 +49,7 @@ let start = Date.now();
 let username;
 
 let toSend = [];
+let intervals = [];
 setInterval(() => {
 	if (toSend.length !== 0 && Date.now() >= start + 15 * 1000) {
 		bot.chat(toSend[0]);
@@ -305,7 +306,7 @@ function handleCommand(m, u, args, rm = "") {
 		case "spam":
 			parse(u, args, true, parseInt(args[2]) || 0, args[3] || true, args[4] || false);
 		case "stopLoop":
-			op.includes(u) ? clearInterval(args[0] || 0) : msg(`You are not an operator, also this doesn't work, wth?`, u);
+			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1) - 1]) : msg(`You are not an operator, also this doesn't work, wth?`, u);
 	}
 
 }
@@ -368,7 +369,7 @@ function loadFile(name = "", loop, delay, command, random) {
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
-			let intervalId = setInterval(() => {
+			let interval = setInterval(() => {
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
@@ -391,10 +392,8 @@ function loadFile(name = "", loop, delay, command, random) {
 				}
 				i++;
 			}, parseInt(delay) || 0);
-			console.log(intervalId);
-			intervalId = intervalId.triggerId;
-			console.log(intervalId);
-			return intervalId;
+			intervals.push(interval);
+			return intervals.length;
 		}
 	} catch (e) {
 		return e.message;
