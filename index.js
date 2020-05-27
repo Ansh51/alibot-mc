@@ -2,6 +2,8 @@ const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+JSON = require("flatted");
+
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
