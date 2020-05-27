@@ -2,7 +2,7 @@ const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-JSON = require("flatted");
+const flatted = require("flatted");
 
 
 let config = arg;
@@ -394,8 +394,8 @@ function loadFile(name = "", loop, delay, command, random) {
 				i++;
 			}, parseInt(delay) || 0);
 			console.log(intervalId);
-			console.log(JSON.stringify(intervalId));
-			return intervalId;
+			console.log(flatted.stringify(intervalId));
+			return "IDs are broken.";
 		}
 	} catch (e) {
 		return e.message;
