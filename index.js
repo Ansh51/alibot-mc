@@ -248,7 +248,7 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "discord":
-			msg(`Under construction.`, u);
+			msg(`https://discord.gg/pSm8JTZ`, u);
 			break;
 		case "ping":
 			if (args.length >= 1) {
