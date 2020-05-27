@@ -2,6 +2,7 @@ const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+const request = require("request");
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
@@ -73,6 +74,18 @@ let firstchat = true;
 let spawned = false;
 
 let bot;
+
+function isValidHttpUrl(string) {
+	let url;
+
+	try {
+		url = new URL(string);
+	} catch (_) {
+		return false;
+	}
+
+	return url.protocol === "http:" || url.protocol === "https:";
+}
 
 function log(message, sent = false, date = new Date(Date.now())) {
 	console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`);
@@ -306,9 +319,8 @@ function handleCommand(m, u, args, rm = "") {
 		case "spam":
 			parse(u, args, true, parseInt(args[2]) || 0, args[3] || true, args[4] || false);
 		case "stopLoop":
-			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1) - 1]) : msg(`You are not an operator, also this doesn't work, wth?`, u);
+			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1) - 1]) : msg(`You are not an operator.`, u);
 	}
-
 }
 
 function parse(u, args, loop = false, delay = 0, command = true, random = false) {
@@ -318,9 +330,9 @@ function parse(u, args, loop = false, delay = 0, command = true, random = false)
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadFile(args[1], loop, delay, command, random) || "No output."
+						output = loadArray(fs.readFileSync(args[1]).toString().split(os.EOl), loop, delay, command, random) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadFile(path.join(__dirname, args[1]), loop, delay, command, random) || "No output.";
+						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split(os.EOl), loop, delay, command, random) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -328,7 +340,20 @@ function parse(u, args, loop = false, delay = 0, command = true, random = false)
 					log(output);
 				}
 				else if (args[0] === "web") {
-					msg(`Web mode not yet implemented, please submit a PR if you have, as this will take long and I don't wanna start it.`, u);
+					if (isValidHttpUrl(args[1])) {
+						request(args[1], (e, r, b) => {
+							let output = "";
+							if (e) {
+								console.log(e);
+								output = e.message;
+							}
+							loadArray(b.toString().split(os.EOl), loop, delay, command, random);
+							msg(`Done: ${output}`, u);
+							log(output);
+						});
+					} else {
+						msg(`This isn't a valid HTTP URL.`, u);
+					}
 				}
 			} else {
 				msg(`No file/url specified.`);
@@ -341,31 +366,29 @@ function parse(u, args, loop = false, delay = 0, command = true, random = false)
 	}
 }
 
-function loadFile(name = "", loop, delay, command, random) {
+function loadArray(commands = [], loop, delay, command, random) {
 	try {
-		name = name.trim();
-		let commands = [];
-		if (fs.existsSync(name)) {
-			commands = fs.readFileSync(name).toString().split(os.EOL);
-		} else if (fs.existsSync(path.join(__dirname, name))) {
-			commands = fs.readFileSync(path.join(__dirname, name)).toString().split(os.EOL);
-		} else {
-			return `Specified file doesn't exist. (BUG)`;
-		}
 		if (!loop) {
 			return commands.map(m => {
 				m = m.trim();
-				let u = username;
-				if (m.length === 0) {
-					log(`${u} empty message`);
-					return false;
+				if (random) {
+					m += ` (${randStr("8")})`
 				}
-				log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				return handleCommand(m, u, args, rm);
+				if (command) {
+					let u = username;
+					if (m.length === 0) {
+						log(`${u} empty message`);
+						return false;
+					}
+					log(`${u} -> ${m}`);
+					let args = m.split(" ");
+					args.shift();
+					let rm = m;
+					m = m.split(" ")[0];
+					return handleCommand(m, u, args, rm);
+				} else {
+					return send(m);
+				}
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
