@@ -393,9 +393,9 @@ function loadFile(name = "", loop, delay, command, random) {
 				}
 				i++;
 			}, parseInt(delay) || 0);
+			intervalId = intervalId.triggerId;
 			console.log(intervalId);
-			console.log(flatted.stringify(intervalId));
-			return "IDs are broken.";
+			return intervalId;
 		}
 	} catch (e) {
 		return e.message;
