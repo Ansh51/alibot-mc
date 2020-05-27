@@ -200,7 +200,7 @@ function init(r) {
 	});
 	bot.once("login", () => log("Logged in."));
 	bot.once("kick", () => init("Kick"));
-	bot.once("end", () => setTimeout(() => init("End"), 10 * 1000));
+	bot.once("end", () => { console.log("Got 'end'!"); setTimeout(() => init("End"), 10 * 1000); });
 	bot.once("error", (m) => {
 		if (m.message === "Invalid session.") {
 			session = false;
