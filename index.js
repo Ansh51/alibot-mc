@@ -248,7 +248,7 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "discord":
-			msg(`https://discord.gg/pSm8JTZ`, u);
+			msg(`http://alibot.ml/discord/`, u);
 			break;
 		case "ping":
 			if (args.length >= 1) {
