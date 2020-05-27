@@ -368,7 +368,7 @@ function loadFile(name = "", loop, delay, command, random) {
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
-			return setInterval(() => {
+			let intervalId = setInterval(() => {
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
@@ -390,7 +390,10 @@ function loadFile(name = "", loop, delay, command, random) {
 					send(m);
 				}
 				i++;
-			}, parseInt(delay) || 0).toString();
+			}, parseInt(delay) || 0);
+			console.log(intervalId);
+			console.log(JSON.stringify(intervalId));
+			return intervalId;
 		}
 	} catch (e) {
 		return e.message;
