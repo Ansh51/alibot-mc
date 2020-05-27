@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "flatted": "^3.0.2",
     "mineflayer": "^2.15.0",
     "minimist": "^1.2.5",
     "prismarine-nbt": "^1.3.0",

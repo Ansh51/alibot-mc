@@ -2,8 +2,6 @@ const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const flatted = require("flatted");
-
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
@@ -393,6 +391,7 @@ function loadFile(name = "", loop, delay, command, random) {
 				}
 				i++;
 			}, parseInt(delay) || 0);
+			console.log(intervalId);
 			intervalId = intervalId.triggerId;
 			console.log(intervalId);
 			return intervalId;
