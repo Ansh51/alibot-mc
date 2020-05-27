@@ -315,24 +315,24 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			parse(u, args, false, args[2] || true, args[3] || false);
+			parse(u, args, false, args[2] || false);
 		case "spam":
-			parse(u, args, true, parseInt(args[2]) || 0, args[3] || true, args[4] || false);
+			parse(u, args, true, parseInt(args[2]) || 0, args[3] || false);
 		case "stopLoop":
 			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1) - 1]) : msg(`You are not an operator.`, u);
 	}
 }
 
-function parse(u, args, loop = false, delay = 0, command = true, random = false) {
+function parse(u, args, loop = false, delay = 0, random = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadArray(fs.readFileSync(args[1]).toString().split(os.EOl), loop, delay, command, random) || "No output."
+						output = loadArray(fs.readFileSync(args[1]).toString().split(os.EOl), loop, delay, random) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split(os.EOl), loop, delay, command, random) || "No output.";
+						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split(os.EOl), loop, delay, random) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -347,7 +347,7 @@ function parse(u, args, loop = false, delay = 0, command = true, random = false)
 								console.log(e);
 								output = e.message;
 							}
-							loadArray(b.toString().split(os.EOl), loop, delay, command, random);
+							loadArray(b.toString().split(os.EOl), loop, delay, random);
 							msg(`Done: ${output}`, u);
 							log(output);
 						});
@@ -366,7 +366,7 @@ function parse(u, args, loop = false, delay = 0, command = true, random = false)
 	}
 }
 
-function loadArray(commands = [], loop, delay, command, random) {
+function loadArray(commands = [], loop, delay, random) {
 	try {
 		if (!loop) {
 			return commands.map(m => {
@@ -374,21 +374,17 @@ function loadArray(commands = [], loop, delay, command, random) {
 				if (random) {
 					m += ` (${randStr("8")})`
 				}
-				if (command) {
-					let u = username;
-					if (m.length === 0) {
-						log(`${u} empty message`);
-						return false;
-					}
-					log(`${u} -> ${m}`);
-					let args = m.split(" ");
-					args.shift();
-					let rm = m;
-					m = m.split(" ")[0];
-					return handleCommand(m, u, args, rm);
-				} else {
-					return send(m);
+				let u = username;
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
 				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				return handleCommand(m, u, args, rm);
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
@@ -398,21 +394,17 @@ function loadArray(commands = [], loop, delay, command, random) {
 				if (random) {
 					m += ` (${randStr("8")})`
 				}
-				if (command) {
-					let u = username;
-					if (m.length === 0) {
-						log(`${u} empty message`);
-						return false;
-					}
-					log(`${u} -> ${m}`);
-					let args = m.split(" ");
-					args.shift();
-					let rm = m;
-					m = m.split(" ")[0];
-					handleCommand(m, u, args, rm);
-				} else {
-					send(m);
+				let u = username;
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
 				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				handleCommand(m, u, args, rm);
 				i++;
 			}, parseInt(delay) || 0);
 			intervals.push(interval);
