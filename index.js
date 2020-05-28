@@ -20,6 +20,7 @@ try {
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
 	config.DELAYS = delays[arg.d || process.env.CONF_DELAYS || conf.DELAYS || 1];
+	config.REQUEST = arg.r || process.env.CONF_REQUEST || conf.REQUEST || "https://github.com/uAliFurkanY/alibot-mc/";
 } catch (e) {
 	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
 	log("Also provide this: ");
@@ -424,6 +425,7 @@ function loadArray(commands = [], loop, delay, random) {
 init("First Start");
 
 try {
+	setInterval(() => { try { request(config.REQUEST) } catch { } }, 10 * 60 * 1000);
 	rl.on("line", (m) => {
 		if (spawned) {
 			m = m.trim();

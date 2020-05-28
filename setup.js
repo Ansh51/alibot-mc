@@ -29,7 +29,7 @@ if (rl.keyInYNStrict("Is this ok? ")) {
 		OP: op,
 		MODE: mode,
 		ACTIVE: active,
-		DELAYS: delays
+		DELAYS: delays,
 	}));
 	rl.keyInPause("File created. You now can run the program.");
 } else {
