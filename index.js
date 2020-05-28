@@ -373,12 +373,10 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 function loadArray(commands = [], loop, delay, random) {
 	console.log([loop, delay, random]);
 	try {
-		log("this gets called");
 		if (loop) {
-			console.log("This gets called...");
 			let i = 0;
 			let interval = setInterval(() => {
-				log(i);
+				log("Spam: " + i);
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
