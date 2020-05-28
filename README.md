@@ -80,6 +80,7 @@ Write these commands in order:
 git clone https://github.com/uAliFurkanY/alibot-mc.git
 cd alibot-mc
 npm i
+node setup.js
 start
 ```
 Now, it should work!
@@ -114,6 +115,7 @@ Then, run these commands in order:
 git clone https://github.com/uAliFurkanY/alibot-mc.git
 cd alibot-mc
 npm i
+node setup.js
 ./start.sh
 ```
 Now, it should work!
