@@ -19,8 +19,8 @@ console.log("Password: " + pass);
 console.log("Operators: " + op);
 console.log("Mode: " + mode);
 console.log("Active: " + active);
-console.log("Delays: " + delays);
-if(rl.keyInYNStrict("Is this ok? ")) {
+console.log("Delays: " + delaysList[delays]);
+if (rl.keyInYNStrict("Is this ok? ")) {
 	console.clear();
 	fs.writeFileSync("config.json", JSON.stringify({
 		HOST: host,
