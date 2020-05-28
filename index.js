@@ -18,10 +18,12 @@ try {
 	config.PASSWORD = arg.p || process.env.CONF_PASSWORD || conf.PASSWORD || false;
 	config.OP = arg.o || process.env.CONF_OP || conf.OP || "AliFurkan";
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
-	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.active || "true";
-	config.DELAYS = delays[args.d || process.env.CONF_DELAYS || conf.delays || 1];
-} catch {
+	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
+	config.DELAYS = delays[args.d || process.env.CONF_DELAYS || conf.DELAYS || 1];
+} catch (e) {
 	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
+	log("Also provide this: ");
+	console.log(e);
 	process.exit(1);
 }
 
