@@ -396,6 +396,7 @@ function loadArray(commands = [], loop, delay, random) {
 		} else {
 			let i = 0;
 			let interval = setInterval(() => {
+				console.log(i);
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
