@@ -319,9 +319,9 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			parse(u, args, false, args[2] || false);
+			parse(u, args, false, 0, (args[2] == "true" ? true : false) || false);
 		case "spam":
-			parse(u, args, true, parseInt(args[2]) || 0, args[3] || false);
+			parse(u, args, true, parseInt(args[2]) || 0, (args[3] == "true" ? true : false) || false);
 		case "stopLoop":
 			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1) - 1]) : msg(`You are not an operator.`, u);
 	}
@@ -381,7 +381,7 @@ function loadArray(commands = [], loop, delay, random) {
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
-					m += ` (${randStr("8")})`
+					m += ` (${randStr("8")})`;
 				}
 				let u = username;
 				if (m.length === 0) {
@@ -402,7 +402,7 @@ function loadArray(commands = [], loop, delay, random) {
 			return commands.map(m => {
 				m = m.trim();
 				if (random) {
-					m += ` (${randStr("8")})`
+					m += ` (${randStr("8")})`;
 				}
 				let u = username;
 				if (m.length === 0) {
