@@ -328,7 +328,6 @@ function handleCommand(m, u, args, rm = "") {
 }
 
 function parse(u, args, loop = false, delay = 0, random = false) {
-	console.log([u, args, loop, delay, random]);
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
@@ -395,7 +394,7 @@ function loadArray(commands = [], loop, delay, random) {
 				m = m.split(" ")[0];
 				handleCommand(m, u, args, rm);
 				i++;
-			}, parseInt(delay) || 0);
+			}, delay);
 			intervals.push(interval);
 			return intervals.length;
 		} else {
