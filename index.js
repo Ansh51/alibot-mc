@@ -61,7 +61,7 @@ setInterval(() => {
 		log(toSend[0], true);
 		toSend.shift();
 	}
-}, CONFIG.DELAYS[3]);
+}, config.DELAYS[3]);
 
 let session = false;
 
