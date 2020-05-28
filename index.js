@@ -372,28 +372,9 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 }
 
 function loadArray(commands = [], loop, delay, random) {
-	console.log("Loading: ");
-	console.log(commands);
+	console.log([loop, delay, random]);
 	try {
-		if (!loop) {
-			return commands.map(m => {
-				m = m.trim();
-				if (random) {
-					m += ` (${randStr("8")})`
-				}
-				let u = username;
-				if (m.length === 0) {
-					log(`${u} empty message`);
-					return false;
-				}
-				log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm);
-			}).length + " command(s) ran.";
-		} else {
+		if (loop) {
 			let i = 0;
 			let interval = setInterval(() => {
 				console.log(i);
@@ -417,6 +398,24 @@ function loadArray(commands = [], loop, delay, random) {
 			}, parseInt(delay) || 0);
 			intervals.push(interval);
 			return intervals.length;
+		} else {
+			return commands.map(m => {
+				m = m.trim();
+				if (random) {
+					m += ` (${randStr("8")})`
+				}
+				let u = username;
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
+				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				handleCommand(m, u, args, rm);
+			}).length + " command(s) ran.";
 		}
 	} catch (e) {
 		return e.message;
