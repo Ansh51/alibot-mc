@@ -1,7 +1,6 @@
 const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
-const os = require("os");
 const request = require("request");
 
 let config = arg;
@@ -335,9 +334,9 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadArray(fs.readFileSync(args[1]).toString().split(os.EOl), loop, delay, random) || "No output."
+						output = loadArray(fs.readFileSync(args[1]).toString().split("\n"), loop, delay, random) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split(os.EOl), loop, delay, random) || "No output.";
+						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -352,7 +351,7 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 								console.log(e);
 								output = e.message;
 							}
-							loadArray(b.toString().split(os.EOl), loop, delay, random);
+							loadArray(b.toString().split("\n"), loop, delay, random);
 							msg(`Done: ${output}`, u);
 							log(output);
 						});
