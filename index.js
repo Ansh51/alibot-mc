@@ -6,18 +6,20 @@ const request = require("request");
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
+let delays = [[0 * 1000, 5 * 1000, 5 * 60 * 1000, 0.5 * 1000], [5 * 1000, 10 * 1000, 10 * 60 * 1000, 1.5 * 1000], [10 * 1000, 20 * 1000, 20 * 60 * 1000, 2.5 * 1000], [20 * 1000, 40 * 1000, 40 * 60 * 1000, 5 * 1000]];
 
 try { require("dotenv").config({ path: envFile }); } catch { }
 
 try {
 	let conf = require(require("path").join(__dirname, "config.json"));
-	config.WEBSITE = arg.w || process.env.CONF_WEBSITE || conf.WEBSITE || "http://alibot.ml"; // You probably shouldn't change this.
+	config.WEBSITE = arg.w || process.env.CONF_WEBSITE || conf.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/"; // You probably shouldn't change this.
 	config.HOST = arg.h || process.env.CONF_HOST || conf.HOST || "0b0t.org";
 	config.USERNAME = arg.u || process.env.CONF_USERNAME || conf.USERNAME || "alibot";
 	config.PASSWORD = arg.p || process.env.CONF_PASSWORD || conf.PASSWORD || false;
 	config.OP = arg.o || process.env.CONF_OP || conf.OP || "AliFurkan";
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.active || "true";
+	config.DELAYS = delays[(args.d || process.env.CONF_DELAYS || conf.delays || 1) - 1];
 } catch {
 	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
 	process.exit(1);
@@ -57,7 +59,7 @@ setInterval(() => {
 		log(toSend[0], true);
 		toSend.shift();
 	}
-}, 1500);
+}, CONFIG.DELAYS[3]);
 
 let session = false;
 
@@ -199,8 +201,8 @@ function init(r) {
 		login.session = session;
 	});
 	bot.once("login", () => log("Logged in."));
-	bot.once("kick", () => init("Kick"));
-	bot.once("end", () => { console.log("Got 'end'!"); setTimeout(() => init("End"), 10 * 1000); });
+	bot.once("kick", () => setTimeout(() => init("Kick"), config.DELAYS[0]));
+	bot.once("end", () => { console.log("Got 'end'!"); setTimeout(() => init("End"), config.DELAYS[1]); });
 	bot.once("error", (m) => {
 		if (m.message === "Invalid session.") {
 			session = false;
@@ -208,7 +210,7 @@ function init(r) {
 		} else if (
 			m.message === "Invalid credentials. Invalid username or password."
 		) {
-			setTimeout(() => init("Error"), 10 * 60 * 1000);
+			setTimeout(() => init("Error"), config.DELAYS[2]);
 		}
 	});
 	bot.on('sleep', () => {
@@ -262,7 +264,7 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "discord":
-			msg(`http://alibot.ml/discord/`, u);
+			msg(`https://discord.gg/gr8y8hY`, u);
 			break;
 		case "ping":
 			if (args.length >= 1) {
@@ -367,6 +369,8 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 }
 
 function loadArray(commands = [], loop, delay, random) {
+	console.log("Loading: ");
+	console.log(commands);
 	try {
 		if (!loop) {
 			return commands.map(m => {
@@ -384,7 +388,7 @@ function loadArray(commands = [], loop, delay, random) {
 				args.shift();
 				let rm = m;
 				m = m.split(" ")[0];
-				return handleCommand(m, u, args, rm);
+				handleCommand(m, u, args, rm);
 			}).length + " command(s) ran.";
 		} else {
 			let i = 0;
