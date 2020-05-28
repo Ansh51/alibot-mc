@@ -328,6 +328,7 @@ function handleCommand(m, u, args, rm = "") {
 }
 
 function parse(u, args, loop = false, delay = 0, random = false) {
+	console.log([u, args, loop, delay, random]);
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
