@@ -54,14 +54,13 @@ let start = Date.now();
 let username;
 
 let toSend = [];
-let intervals = [];
-setInterval(() => {
+let intervals = [setInterval(() => {
 	if (toSend.length !== 0 && Date.now() >= start + 15 * 1000) {
 		bot.chat(toSend[0]);
 		log(toSend[0], true);
 		toSend.shift();
 	}
-}, config.DELAYS[3]);
+}, config.DELAYS[3])];
 
 let session = false;
 
