@@ -29,7 +29,7 @@ try {
 
 const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.DELAYS);
 if (!isVarSet()) {
-	log("Run setup.js and try again.");
+	console.error("Run setup.js and try again.");
 	process.exit(0);
 }
 if (config.ACTIVE === "false") {
@@ -37,7 +37,9 @@ if (config.ACTIVE === "false") {
 }
 
 const mineflayer = require("mineflayer");
+const navigatePlugin = require('mineflayer-navigate')(mineflayer);
 const readline = require('readline');
+const Vec3 = require("Vec3");
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -55,7 +57,7 @@ let username;
 let toSend = [];
 let intervals = [
 	setInterval(() => {
-		if (toSend.length !== 0) {
+		if (toSend.length !== 0 && spawned) {
 			bot.chat(toSend[0]);
 			log(toSend[0], true);
 			toSend.shift();
@@ -145,6 +147,7 @@ function wakeUp(u) {
 }
 
 function init(r) {
+	navigatePlugin(bot);
 	spawned = false;
 	log(`[${Date.now()}] Init ${r}`);
 	bot = mineflayer.createBot(login);
@@ -328,9 +331,36 @@ function handleCommand(m, u, args, rm = "") {
 			parse(u, args, true, parseInt(args[2]) || 0, (args[3] == "true" ? true : false) || false);
 			break;
 		case "stopLoop":
-			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1)]) : msg(`You are not an operator.`, u);
+			if (op.includes(u)) {
+				clearInterval(intervals[(parseInt(args[0]) || 1)]);
+				intervalNames[intervals[(parseInt(args[0]) || 1)]] += " (stopped)";
+			} else {
+				msg(`You are not an operator.`, u);
+			}
 			break;
 		case "listLoop":
+			msg(`Current Intervals: ${intervalNames.join(", ")}`, u);
+			break;
+		case "goto":
+			if (op.includes(u) || mode === "public") {
+				let coords = [parseInt(args[0]) || 0, parseInt(args[1]) || 0, parseInt(args[2]) || 0];
+				msg(`Going to: ${coords.join(" ")}.`, u);
+				try { bot.navigate.to(Vec3.fromArray(coords)); } catch (e) {
+					msg(`An error occured. See: ${e.message}.`, u);
+				}
+			} else {
+				msg(`You are not an operator and the mode is ${mode}.`, u);
+			}
+			break;
+		case "cancelGoto":
+			if (op.includes(u) || mode === "public") {
+				msg(`OK. Stopping...`, u);
+				try { bot.navigate.stop(); } catch (e) {
+					msg(`An error occured. See: ${e.message}.`, u);
+				}
+			} else {
+				msg(`You are not an operator and the mode is ${mode}.`, u);
+			}
 			break;
 	}
 }
