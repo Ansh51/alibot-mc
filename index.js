@@ -39,7 +39,7 @@ if (config.ACTIVE === "false") {
 const mineflayer = require("mineflayer");
 const navigatePlugin = require('mineflayer-navigate')(mineflayer);
 const readline = require('readline');
-const Vec3 = require("Vec3");
+const Vec3 = require("vec3");
 
 const rl = readline.createInterface({
 	input: process.stdin,
