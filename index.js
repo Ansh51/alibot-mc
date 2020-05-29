@@ -345,7 +345,7 @@ function handleCommand(m, u, args, rm = "") {
 			if (op.includes(u) || mode === "public") {
 				let coords = [parseInt(args[0]) || 0, parseInt(args[1]) || 0, parseInt(args[2]) || 0];
 				msg(`Going to: ${coords.join(" ")}.`, u);
-				try { bot.navigate.to(Vec3.fromArray(coords)); } catch (e) {
+				try { bot.navigate.to(new Vec3(coords[0], coords[1], coords[2])); } catch (e) {
 					msg(`An error occured. See: ${e.message}.`, u);
 				}
 			} else {
