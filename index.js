@@ -19,7 +19,6 @@ try {
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
 	config.DELAYS = delays[arg.d || process.env.CONF_DELAYS || conf.DELAYS || 1];
-	config.REQUEST = arg.r || process.env.CONF_REQUEST || conf.REQUEST || "https://github.com/uAliFurkanY/alibot-mc/";
 } catch (e) {
 	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
 	log("Also provide this: ");
@@ -28,7 +27,7 @@ try {
 }
 
 
-const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE);
+const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.DELAYS);
 if (!isVarSet()) {
 	log("Run setup.js and try again.");
 	process.exit(0);
