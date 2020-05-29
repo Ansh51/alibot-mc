@@ -438,7 +438,7 @@ try {
 	rl.on("line", (m) => {
 		if (spawned) {
 			m = m.trim();
-			u = username;
+			let u = username;
 			if (m.length === 0) {
 				log(`${u} empty message`);
 				return false;
