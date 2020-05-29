@@ -56,8 +56,8 @@ let toSend = [];
 let intervals = [
 	setInterval(() => {
 		if (toSend.length !== 0) {
-			bot.chat(toSend[0][0]);
-			log(toSend[0][0], toSend[0][1]);
+			bot.chat(toSend[0]);
+			log(toSend[0], true);
 			toSend.shift();
 		}
 	}, config.DELAYS[3])
@@ -84,24 +84,26 @@ let bot;
 
 function isValidHttpUrl(string) {
 	let url;
+
 	try {
 		url = new URL(string);
-	} catch {
+	} catch (_) {
 		return false;
 	}
+
 	return url.protocol === "http:" || url.protocol === "https:";
 }
 
-function log(message, sent = false, date = new Date(Date.now()), doLog = true) {
-	doLog ? console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`) : false;
+function log(message, sent = false, date = new Date(Date.now())) {
+	console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`);
 }
 
-function send(msg = "/help", doLog = true) {
-	toSend.push([msg, doLog]);
+function send(msg = "/help") {
+	toSend.push(msg);
 }
 
-function msg(msg, u, doLog = true) {
-	send(`/msg ${u} ${msg}`, doLog);
+function msg(msg, u) {
+	send(`/msg ${u} ${msg}`);
 }
 
 function randStr(length) {
@@ -115,27 +117,27 @@ function randStr(length) {
 	return result;
 }
 
-function goToSleep(u, doLog = true) {
+function goToSleep(u) {
 	const bed = bot.findBlock({
 		matching: block => bot.isABed(block)
 	})
 	if (bed) {
 		bot.sleep(bed, (err) => {
 			if (err) {
-				msg(`I can't sleep: ${err.message}`, u, doLog);
+				msg(`I can't sleep: ${err.message}`, u);
 			} else {
 
 			}
 		})
 	} else {
-		msg(`No nearby bed`, u, doLog);
+		msg(`No nearby bed`, u);
 	}
 }
 
-function wakeUp(u, doLog = true) {
+function wakeUp(u) {
 	bot.wake((err) => {
 		if (err) {
-			msg(`I can't wake up: ${err.message}`, u, doLog);
+			msg(`I can't wake up: ${err.message}`, u);
 		} else {
 
 		}
@@ -173,10 +175,10 @@ function init(r) {
 			let user = m.extra[0].text;
 			log(user + " tpa");
 			if (op.includes(user) || mode !== "private") {
-				send(`/tpy ${user}`, true);
+				send(`/tpy ${user}`);
 			} else {
-				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, user, false);
-				send(`/tpn ${user}`, true);
+				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, u);
+				send(`/tpn ${user}`);
 			}
 		});
 		bot.on("msg", (u, m, t, rm) => {
@@ -224,7 +226,7 @@ function init(r) {
 	})
 }
 
-function handleCommand(m, u, args, rm = "", doLog = true) {
+function handleCommand(m, u, args, rm = "") {
 	switch (m) {
 		case "help":
 			msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
@@ -232,85 +234,85 @@ function handleCommand(m, u, args, rm = "", doLog = true) {
 		case "kill":
 			if (op.includes(u) ||
 				(Date.now() >= lastkill + 15 * 1000 && mode !== "private")) {
-				send(`/kill`, doLog);
+				send(`/kill`);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, doLog);
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
 			}
 			break;
 		case "tphere":
 			if (op.includes(u) || mode === "public") {
-				args.length === 1 ? send(`/tpa ${args[0]}`, doLog) : send(`/tpa ${u}`, doLog);
+				args.length === 1 ? send(`/tpa ${args[0]}`) : send(`/tpa ${u}`);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, doLog);
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
 			}
 			break;
 		case "say":
 			if (op.includes(u)) {
 				send(rm.substr(4));
 			} else {
-				msg(`You are not an operator.`, u, doLog);
+				msg(`You are not an operator.`, u);
 			}
 			break;
 		case "op":
 			if (op.includes(u) && args.length >= 1) {
 				op.push(args[0]);
-				msg(`Opped ${args[0]}`, u, doLog);
+				msg(`Opped ${args[0]}`, u);
 			} else {
 				msg(op.join(", "), u);
 			}
 			break;
 		case "coords":
 			if (op.includes(u) || mode !== "private") {
-				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u, doLog);
+				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u);
 			} else {
-				msg(`You are not an operator and the mode is ${mode}.`, u, doLog);
+				msg(`You are not an operator and the mode is ${mode}.`, u);
 			}
 			break;
 		case "discord":
-			msg(`https://discord.gg/gr8y8hY`, u, doLog);
+			msg(`https://discord.gg/gr8y8hY`, u);
 			break;
 		case "ping":
 			if (args.length >= 1) {
-				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u, doLog);
+				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u);
 			} else {
-				msg(`Your ping is ${bot.players[u].ping}ms.`, u, doLog);
+				msg(`Your ping is ${bot.players[u].ping}ms.`, u);
 			}
 			break;
 		case "mode":
 			if (op.includes(u) && args.length >= 1) {
-				msg(`Changing the mode to ${args[0]}.`, u, doLog);
+				msg(`Changing the mode to ${args[0]}.`, u);
 				mode = args[0];
 			} else {
-				msg(`The mode is ${mode}`, u, doLog);
+				msg(`The mode is ${mode}`, u);
 			}
 			break;
 		case "reinit":
 			if (op.includes(u)) {
 				init("reinit")
 			} else {
-				msg(`You are not an operator.`, u, doLog);
+				msg(`You are not an operator.`, u);
 			}
 			break;
 		case "random":
 			if (args.length === 0) {
-				msg(`Usage: random [dice|number <min> <max>]`, u, doLog);
+				msg(`Usage: random [dice|number <min> <max>]`, u);
 			} else if (args[0] === "number") {
 				if (args.length >= 4) {
 					if (parseInt(args[1]) !== NaN && parseInt(args[2]) !== NaN) {
 						let nums = [parseInt(args[1]), parseInt(args[2])];
 						if (nums[1] > nums[0]) {
-							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u, doLog);
+							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u);
 						} else {
-							msg(`Minimum is larger than maximum.`, u, doLog);
+							msg(`Minimum is larger than maximum.`, u);
 						}
 					} else {
-						msg(`You did not provide a number.`, u, doLog);
+						msg(`You did not provide a number.`, u);
 					}
 				} else {
-					msg(`Usage: random [dice|number <min> <max>]`, u, doLog);
+					msg(`Usage: random [dice|number <min> <max>]`, u);
 				}
 			} else if (args[0] === "dice") {
-				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u, doLog);
+				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
 			}
 			break;
 		case "sleep":
@@ -326,14 +328,14 @@ function handleCommand(m, u, args, rm = "", doLog = true) {
 			parse(u, args, true, parseInt(args[2]) || 0, (args[3] == "true" ? true : false) || false);
 			break;
 		case "stopLoop":
-			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1)]) : msg(`You are not an operator.`, u, doLog);
+			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1)]) : msg(`You are not an operator.`, u);
 			break;
 		case "listLoop":
 			break;
 	}
 }
 
-function parse(u, args, loop = false, delay = 0, random = false, doLog = false) {
+function parse(u, args, loop = false, delay = 0, random = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
@@ -344,9 +346,9 @@ function parse(u, args, loop = false, delay = 0, random = false, doLog = false) 
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
 						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random, u) || "No output.";
 					} else {
-						return msg(`Specified file doesn't exist.`, u, doLog);
+						return msg(`Specified file doesn't exist.`, u);
 					}
-					msg(`Done: ${output}`, u, doLog);
+					msg(`Done: ${output}`, u);
 					log(output);
 				}
 				else if (args[0] === "web") {
@@ -358,25 +360,26 @@ function parse(u, args, loop = false, delay = 0, random = false, doLog = false) 
 								output = e.message;
 							}
 							loadArray(b.toString().split("\n"), loop, delay, random, u);
-							msg(`Done: ${output}`, u, doLog);
+							msg(`Done: ${output}`, u);
 							log(output);
 						});
 					} else {
-						msg(`This isn't a valid HTTP URL.`, u, doLog);
+						msg(`This isn't a valid HTTP URL.`, u);
 					}
 				}
 			} else {
 				msg(`No file/url specified.`);
 			}
 		} else {
-			msg(`Mode should be either 'web' or 'file'.`, u, doLog);
+			msg(`Mode should be either 'web' or 'file'.`, u);
 		}
 	} else {
-		msg(`You are not an operator.`, u, doLog);
+		msg(`You are not an operator.`, u);
 	}
 }
 
-function loadArray(commands = [], loop, delay, random, u, doLog) {
+function loadArray(commands = [], loop, delay, random, u) {
+	console.log([loop, delay, random]);
 	try {
 		if (loop) {
 			let date = new Date(Date.now());
@@ -390,7 +393,7 @@ function loadArray(commands = [], loop, delay, random, u, doLog) {
 				}
 				u = u || username;
 				if (m.length === 0) {
-					log(`${u} empty message`, doLog);
+					log(`${u} empty message`);
 					return false;
 				}
 				log(`${u} -> ${m}`);
@@ -398,7 +401,7 @@ function loadArray(commands = [], loop, delay, random, u, doLog) {
 				args.shift();
 				let rm = m;
 				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm, false);
+				handleCommand(m, u, args, rm);
 				i++;
 			}, delay);
 			intervals.push(interval);
@@ -412,7 +415,7 @@ function loadArray(commands = [], loop, delay, random, u, doLog) {
 				}
 				u = u || username;
 				if (m.length === 0) {
-					log(`${u} empty message`, doLog);
+					log(`${u} empty message`);
 					return false;
 				}
 				log(`${u} -> ${m}`);
@@ -420,7 +423,7 @@ function loadArray(commands = [], loop, delay, random, u, doLog) {
 				args.shift();
 				let rm = m;
 				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm, false);
+				handleCommand(m, u, args, rm);
 			}).length + " command(s) ran.";
 		}
 	} catch (e) {
@@ -431,7 +434,6 @@ function loadArray(commands = [], loop, delay, random, u, doLog) {
 init("First Start");
 
 try {
-	setInterval(() => { try { request(config.REQUEST) } catch { } }, 10 * 60 * 1000);
 	rl.on("line", (m) => {
 		if (spawned) {
 			m = m.trim();
