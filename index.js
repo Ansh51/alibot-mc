@@ -84,26 +84,24 @@ let bot;
 
 function isValidHttpUrl(string) {
 	let url;
-
 	try {
 		url = new URL(string);
-	} catch (_) {
+	} catch {
 		return false;
 	}
-
 	return url.protocol === "http:" || url.protocol === "https:";
 }
 
-function log(message, sent = false, date = new Date(Date.now())) {
-	console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`);
+function log(message, sent = false, date = new Date(Date.now()), doLog = true) {
+	doLog ? console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`) : false;
 }
 
-function send(msg = "/help", log = true) {
+function send(msg = "/help", doLog = true) {
 	toSend.push(msg);
 }
 
-function msg(msg, u, log = true) {
-	send(`/msg ${u} ${msg}`, log);
+function msg(msg, u, doLog = true) {
+	send(`/msg ${u} ${msg}`, doLog);
 }
 
 function randStr(length) {
@@ -117,27 +115,27 @@ function randStr(length) {
 	return result;
 }
 
-function goToSleep(u, log = true) {
+function goToSleep(u, doLog = true) {
 	const bed = bot.findBlock({
 		matching: block => bot.isABed(block)
 	})
 	if (bed) {
 		bot.sleep(bed, (err) => {
 			if (err) {
-				msg(`I can't sleep: ${err.message}`, u, log);
+				msg(`I can't sleep: ${err.message}`, u, doLog);
 			} else {
 
 			}
 		})
 	} else {
-		msg(`No nearby bed`, u, log);
+		msg(`No nearby bed`, u, doLog);
 	}
 }
 
-function wakeUp(u, log = true) {
+function wakeUp(u, doLog = true) {
 	bot.wake((err) => {
 		if (err) {
-			msg(`I can't wake up: ${err.message}`, u, log);
+			msg(`I can't wake up: ${err.message}`, u, doLog);
 		} else {
 
 		}
@@ -226,7 +224,7 @@ function init(r) {
 	})
 }
 
-function handleCommand(m, u, args, rm = "", log = true) {
+function handleCommand(m, u, args, rm = "", doLog = true) {
 	switch (m) {
 		case "help":
 			msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
@@ -234,85 +232,85 @@ function handleCommand(m, u, args, rm = "", log = true) {
 		case "kill":
 			if (op.includes(u) ||
 				(Date.now() >= lastkill + 15 * 1000 && mode !== "private")) {
-				send(`/kill`, log);
+				send(`/kill`, doLog);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, log);
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, doLog);
 			}
 			break;
 		case "tphere":
 			if (op.includes(u) || mode === "public") {
-				args.length === 1 ? send(`/tpa ${args[0]}`, log) : send(`/tpa ${u}`, log);
+				args.length === 1 ? send(`/tpa ${args[0]}`, doLog) : send(`/tpa ${u}`, doLog);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, log);
+				msg(`Declining! You're not an operator and the mode is ${mode}.`, u, doLog);
 			}
 			break;
 		case "say":
 			if (op.includes(u)) {
 				send(rm.substr(4));
 			} else {
-				msg(`You are not an operator.`, u, log);
+				msg(`You are not an operator.`, u, doLog);
 			}
 			break;
 		case "op":
 			if (op.includes(u) && args.length >= 1) {
 				op.push(args[0]);
-				msg(`Opped ${args[0]}`, u, log);
+				msg(`Opped ${args[0]}`, u, doLog);
 			} else {
 				msg(op.join(", "), u);
 			}
 			break;
 		case "coords":
 			if (op.includes(u) || mode !== "private") {
-				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u, log);
+				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u, doLog);
 			} else {
-				msg(`You are not an operator and the mode is ${mode}.`, u, log);
+				msg(`You are not an operator and the mode is ${mode}.`, u, doLog);
 			}
 			break;
 		case "discord":
-			msg(`https://discord.gg/gr8y8hY`, u, log);
+			msg(`https://discord.gg/gr8y8hY`, u, doLog);
 			break;
 		case "ping":
 			if (args.length >= 1) {
-				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u, log);
+				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u, doLog);
 			} else {
-				msg(`Your ping is ${bot.players[u].ping}ms.`, u, log);
+				msg(`Your ping is ${bot.players[u].ping}ms.`, u, doLog);
 			}
 			break;
 		case "mode":
 			if (op.includes(u) && args.length >= 1) {
-				msg(`Changing the mode to ${args[0]}.`, u, log);
+				msg(`Changing the mode to ${args[0]}.`, u, doLog);
 				mode = args[0];
 			} else {
-				msg(`The mode is ${mode}`, u, log);
+				msg(`The mode is ${mode}`, u, doLog);
 			}
 			break;
 		case "reinit":
 			if (op.includes(u)) {
 				init("reinit")
 			} else {
-				msg(`You are not an operator.`, u, log);
+				msg(`You are not an operator.`, u, doLog);
 			}
 			break;
 		case "random":
 			if (args.length === 0) {
-				msg(`Usage: random [dice|number <min> <max>]`, u, log);
+				msg(`Usage: random [dice|number <min> <max>]`, u, doLog);
 			} else if (args[0] === "number") {
 				if (args.length >= 4) {
 					if (parseInt(args[1]) !== NaN && parseInt(args[2]) !== NaN) {
 						let nums = [parseInt(args[1]), parseInt(args[2])];
 						if (nums[1] > nums[0]) {
-							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u, log);
+							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u, doLog);
 						} else {
-							msg(`Minimum is larger than maximum.`, u, log);
+							msg(`Minimum is larger than maximum.`, u, doLog);
 						}
 					} else {
-						msg(`You did not provide a number.`, u, log);
+						msg(`You did not provide a number.`, u, doLog);
 					}
 				} else {
-					msg(`Usage: random [dice|number <min> <max>]`, u, log);
+					msg(`Usage: random [dice|number <min> <max>]`, u, doLog);
 				}
 			} else if (args[0] === "dice") {
-				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u, log);
+				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u, doLog);
 			}
 			break;
 		case "sleep":
@@ -328,14 +326,14 @@ function handleCommand(m, u, args, rm = "", log = true) {
 			parse(u, args, true, parseInt(args[2]) || 0, (args[3] == "true" ? true : false) || false);
 			break;
 		case "stopLoop":
-			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1)]) : msg(`You are not an operator.`, u, log);
+			op.includes(u) ? clearInterval(intervals[(parseInt(args[0]) || 1)]) : msg(`You are not an operator.`, u, doLog);
 			break;
 		case "listLoop":
 			break;
 	}
 }
 
-function parse(u, args, loop = false, delay = 0, random = false, log = false) {
+function parse(u, args, loop = false, delay = 0, random = false, doLog = false) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
@@ -346,9 +344,9 @@ function parse(u, args, loop = false, delay = 0, random = false, log = false) {
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
 						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random, u) || "No output.";
 					} else {
-						return msg(`Specified file doesn't exist.`, u, log);
+						return msg(`Specified file doesn't exist.`, u, doLog);
 					}
-					msg(`Done: ${output}`, u, log);
+					msg(`Done: ${output}`, u, doLog);
 					log(output);
 				}
 				else if (args[0] === "web") {
@@ -360,25 +358,25 @@ function parse(u, args, loop = false, delay = 0, random = false, log = false) {
 								output = e.message;
 							}
 							loadArray(b.toString().split("\n"), loop, delay, random, u);
-							msg(`Done: ${output}`, u, log);
+							msg(`Done: ${output}`, u, doLog);
 							log(output);
 						});
 					} else {
-						msg(`This isn't a valid HTTP URL.`, u, log);
+						msg(`This isn't a valid HTTP URL.`, u, doLog);
 					}
 				}
 			} else {
 				msg(`No file/url specified.`);
 			}
 		} else {
-			msg(`Mode should be either 'web' or 'file'.`, u, log);
+			msg(`Mode should be either 'web' or 'file'.`, u, doLog);
 		}
 	} else {
-		msg(`You are not an operator.`, u, log);
+		msg(`You are not an operator.`, u, doLog);
 	}
 }
 
-function loadArray(commands = [], loop, delay, random, u) {
+function loadArray(commands = [], loop, delay, random, u, doLog) {
 	console.log([loop, delay, random]);
 	try {
 		if (loop) {
@@ -393,7 +391,7 @@ function loadArray(commands = [], loop, delay, random, u) {
 				}
 				u = u || username;
 				if (m.length === 0) {
-					log(`${u} empty message`);
+					log(`${u} empty message`, doLog);
 					return false;
 				}
 				log(`${u} -> ${m}`);
@@ -415,7 +413,7 @@ function loadArray(commands = [], loop, delay, random, u) {
 				}
 				u = u || username;
 				if (m.length === 0) {
-					log(`${u} empty message`);
+					log(`${u} empty message`, doLog);
 					return false;
 				}
 				log(`${u} -> ${m}`);
