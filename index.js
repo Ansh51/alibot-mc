@@ -55,9 +55,9 @@ let username;
 let toSend = [];
 let intervals = [
 	setInterval(() => {
-		if (toSend.length !== 0 && Date.now() >= start + 15 * 1000) {
-			bot.chat(toSend[0]);
-			log(toSend[0], true);
+		if (toSend.length !== 0) {
+			bot.chat(toSend[0][0]);
+			log(toSend[0][0], toSend[0][1]);
 			toSend.shift();
 		}
 	}, config.DELAYS[3])
@@ -97,7 +97,7 @@ function log(message, sent = false, date = new Date(Date.now()), doLog = true) {
 }
 
 function send(msg = "/help", doLog = true) {
-	toSend.push(msg);
+	toSend.push([msg, doLog]);
 }
 
 function msg(msg, u, doLog = true) {
@@ -377,7 +377,6 @@ function parse(u, args, loop = false, delay = 0, random = false, doLog = false) 
 }
 
 function loadArray(commands = [], loop, delay, random, u, doLog) {
-	console.log([loop, delay, random]);
 	try {
 		if (loop) {
 			let date = new Date(Date.now());
