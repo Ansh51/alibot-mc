@@ -147,10 +147,10 @@ function wakeUp(u) {
 }
 
 function init(r) {
-	navigatePlugin(bot);
 	spawned = false;
 	log(`[${Date.now()}] Init ${r}`);
 	bot = mineflayer.createBot(login);
+	navigatePlugin(bot);
 
 	toSend = [];
 
