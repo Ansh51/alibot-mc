@@ -379,7 +379,6 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 }
 
 function loadArray(commands = [], loop, delay, random, u) {
-	console.log([loop, delay, random]);
 	try {
 		if (loop) {
 			let date = new Date(Date.now());
