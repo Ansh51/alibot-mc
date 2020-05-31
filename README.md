@@ -72,9 +72,9 @@ Makes the bot load commands from a file and repeat. **
 Makes the bot stop a `spam` loop.
 
 ## Install
-1: Download the latest release for your OS from [here]().
+1: Download the latest release for your OS from [here](https://mega.nz/folder/dWpknQIT#QxtqVPco9VGFmQ7LVZz_mg
 2: Extract it to somewhere.
-4: Start `alibot`.
+3: Start `alibot`.
 
 ## Build
 You'll need `node` and the `npm` package `pkg` for this. https://nodejs.org
