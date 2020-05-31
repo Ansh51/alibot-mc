@@ -9,7 +9,7 @@ pass = rl.question("Enter the MC account password: ", {
 op = rl.question("Enter the operators of the bot separated by ',': ");
 let modes = ["public", "private"];
 mode = modes[rl.keyInSelect(modes, "Select the mode: ")] || "public";
-let delaysList = ["Kick: 0s, End: 5s, Error: 5m, Message: 0.5s", "Kick: 5s, End: 10s, Error: 10m, Message: 1.5s (recommended)", "Kick: 10s, End: 20s, Error: 20m, Message: 2.5s", "Kick: 20s, End: 40s, Error: 40m, Message: 5"];
+let delaysList = ["Kick: 0s, End: 5s, Error: 5m, Message: 0.5s", "Kick: 5s, End: 10s, Error: 10m, Message: 1.5s", "Kick: 10s, End: 20s, Error: 20m, Message: 2.5s", "Kick: 20s, End: 40s, Error: 40m, Message: 5s", "Kick: 5s, End: 15s, Error: 30m, Message: 2s (Recommended)"];
 delays = rl.keyInSelect(delaysList) || 2;
 active = rl.keyInYNStrict("Should it be active? ") ? "true" : "false";
 console.clear();
