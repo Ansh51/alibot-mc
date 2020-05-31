@@ -181,7 +181,6 @@ function init(r) {
 				send(`/tpy ${user}`);
 			} else {
 				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, user);
-				send(`/tpn ${user}`);
 			}
 		});
 		bot.on("msg", (u, m, t, rm) => {
