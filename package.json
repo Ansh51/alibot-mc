@@ -1,15 +1,19 @@
 {
-	"name": "alibot-mc",
+	"name": "alibot",
 	"version": "0.1.0",
 	"description": "Minecraft Bot",
 	"main": "index.js",
 	"bin": {
-		"alibot": "index.js"
+		"alibot": "index.js",
+		"alibot-setup": "setup.js"
 	},
 	"scripts": {
 		"start": "node index.js",
 		"test": "npx nodemon .",
-		"build": "npx pkg . --targets latest"
+		"build-win": "npx pkg . --targets win",
+		"build-linux": "npx pkg . --targets linux",
+		"build-macos": "npx pkg . --targets macos",
+		"build-all": "npx pkg ."
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
