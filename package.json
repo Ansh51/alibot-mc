@@ -4,12 +4,12 @@
 	"description": "Minecraft Bot",
 	"main": "index.js",
 	"bin": {
-		"alibot": "node ."
+		"alibot": "index.js"
 	},
 	"scripts": {
 		"start": "node index.js",
 		"test": "npx nodemon .",
-		"build": "npx pkg ."
+		"build": "npx pkg . --targets latest"
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
