@@ -15,7 +15,7 @@ active = rl.keyInYNStrict("Should it be active? ") ? "true" : "false";
 console.clear();
 console.log("Server: " + host);
 console.log("User: " + user);
-console.log("Password: " + pass);
+console.log("Password: " + pass.replace(/./g, "*"));
 console.log("Operators: " + op);
 console.log("Mode: " + mode);
 console.log("Active: " + active);

@@ -3,6 +3,9 @@ Bot for Minecraft. (designed for and tested on 0b0t.org)
 
 [Help](#commands)
 [Install](#install)
+[Build](#build)
+[Run](#run)
+[Update](#update)
 
 ## Commands
 *: Only in public mode.
@@ -71,7 +74,6 @@ Makes the bot stop a `spam` loop.
 ## Install
 1: Download the latest release for your OS from [here]().
 2: Extract it to somewhere.
-3: Start `alibot-setup` and fill in the information.
 4: Start `alibot`.
 
 ## Build

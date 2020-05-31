@@ -4,8 +4,7 @@
 	"description": "Minecraft Bot",
 	"main": "index.js",
 	"bin": {
-		"alibot": "index.js",
-		"alibot-setup": "setup.js"
+		"alibot": "index.js"
 	},
 	"scripts": {
 		"start": "node index.js",
@@ -16,8 +15,7 @@
 		"build-all": "npx pkg ."
 	},
 	"pkg": {
-		"scripts": "*.js",
-		"assets": "config.json"
+		"scripts": "*.js"
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
