@@ -180,7 +180,7 @@ function init(r) {
 			if (op.includes(user) || mode !== "private") {
 				send(`/tpy ${user}`);
 			} else {
-				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, user);
+				msg(`You are not an operator and the mode is ${mode}.`, user);
 			}
 		});
 		bot.on("msg", (u, m, t, rm) => {
