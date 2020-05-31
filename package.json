@@ -3,8 +3,13 @@
 	"version": "0.1.0",
 	"description": "Minecraft Bot",
 	"main": "index.js",
+	"bin": {
+		"alibot": "node ."
+	},
 	"scripts": {
-		"start": "node index.js"
+		"start": "node index.js",
+		"test": "npx nodemon .",
+		"build": "npx pkg ."
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
