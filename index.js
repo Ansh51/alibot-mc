@@ -180,7 +180,7 @@ function init(r) {
 			if (op.includes(user) || mode !== "private") {
 				send(`/tpy ${user}`);
 			} else {
-				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, u);
+				msg(`Declining! You are not in the operators list and the mode is ${mode}.`, user);
 				send(`/tpn ${user}`);
 			}
 		});
