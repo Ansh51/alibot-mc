@@ -16,6 +16,10 @@ Sends a link to here.
  	kill
 Kills the bot. *
 
+#### tpa
+	/tpa <bot_name>
+Automatically accepts your teleportation request. *
+
 #### tphere
 	tphere [user]
 Sends you or the specified user a teleportation request. **
