@@ -29,7 +29,8 @@ try {
 
 const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.DELAYS);
 if (!isVarSet()) {
-	console.error("Run setup.js and try again.");
+	console.error("No configuration found, starting setup.");
+	require("./setup");
 	process.exit(0);
 }
 if (config.ACTIVE === "false") {

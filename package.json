@@ -15,6 +15,10 @@
 		"build-macos": "npx pkg . --targets macos",
 		"build-all": "npx pkg ."
 	},
+	"pkg": {
+		"scripts": "*.js",
+		"assets": "config.json"
+	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
 		"mineflayer": "^2.15.0",

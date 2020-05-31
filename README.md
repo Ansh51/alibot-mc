@@ -69,57 +69,26 @@ Makes the bot load commands from a file and repeat. **
 Makes the bot stop a `spam` loop.
 
 ## Install
+1: Download the latest release for your OS from [here]().
+2: Extract it to somewhere.
+3: Start `alibot-setup` and fill in the information.
+4: Start `alibot`.
 
-#### Windows
-Install node.js from [this link](https://nodejs.org/)
+## Build
+You'll need `node` and the `npm` package `pkg` for this. https://nodejs.org
 
-Install git from [this link](https://git-scm.com)
+First, clone the repository.
+Then, change directory to in it.
+After that, run `npm run-script build-[win, linux or macos]`.
+Finally, wait until it builds.
 
-Open `cmd`
+## Run
+You'll need `node` for this.
 
-Change directory to your Desktop or where you want to create a folder and install it in it. (`cd [location]`)
+First, clone the repository.
+Then, change directory to in it.
+After that, run `npm i`.
+After it finishes, run `node .`.
 
-Write these commands in order:
-```bat
-git clone https://github.com/uAliFurkanY/alibot-mc.git
-cd alibot-mc
-npm i
-node setup.js
-start
-```
-Now, it should work!
-
-#### GNU/Linux
-You will need the "git" version control tools.
-
-On Fedora-based systems, do "yum install git".
-
-On Debian-based ones install the "git-core" package.
-
-Then run "git --version".  If that says it's older than
-version 1.4.4, then you'd do well to get a newer version.
-
-At worst, just download the latest stable release from
-https://git-scm.com/ and build from source.
-
-Also, "Node.js".
-
-On Fedora-based systems, do "yum install node".
-
-On Debian-based ones install the "node" package.
-
-Then run "node -v". If that says it's older than version 10.x.x, then you'd do well to get a newer version.
-
-At worst, just download the latest package from https://nodejs.org and install it.
-
-Now, open your terminal. Go in a directory that you wish to clone the repository into.
-
-Then, run these commands in order:
-```sh
-git clone https://github.com/uAliFurkanY/alibot-mc.git
-cd alibot-mc
-npm i
-node setup.js
-./start.sh
-```
-Now, it should work!
+### Update
+If you cloned the repository correctly, you should be able to just run `git pull` to update it.
