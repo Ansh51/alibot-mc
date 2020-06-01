@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"start": "node index.js",
-		"test": "npx nodemon .",
+		"test": "npx nodemon ."
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",
