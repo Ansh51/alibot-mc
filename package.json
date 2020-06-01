@@ -9,13 +9,6 @@
 	"scripts": {
 		"start": "node index.js",
 		"test": "npx nodemon .",
-		"build-win": "npx pkg . --targets win",
-		"build-linux": "npx pkg . --targets linux",
-		"build-macos": "npx pkg . --targets macos",
-		"build-all": "npx pkg ."
-	},
-	"pkg": {
-		"scripts": "*.js"
 	},
 	"dependencies": {
 		"dotenv": "^8.2.0",

@@ -2,8 +2,6 @@
 Bot for Minecraft. (designed for and tested on 0b0t.org)
 
 [Help](#commands)
-[Install](#install)
-[Build](#build)
 [Run](#run)
 [Update](#update)
 
@@ -70,19 +68,6 @@ Makes the bot load commands from a file and repeat. **
 #### stopLoop
 	stopLoop <id>
 Makes the bot stop a `spam` loop.
-
-## Install
-1: Download the latest release for your OS from [here](https://mega.nz/folder/dWpknQIT#QxtqVPco9VGFmQ7LVZz_mg
-2: Extract it to somewhere.
-3: Start `alibot`.
-
-## Build
-You'll need `node` and the `npm` package `pkg` for this. https://nodejs.org
-
-First, clone the repository.
-Then, change directory to in it.
-After that, run `npm run-script build-[win, linux or macos]`.
-Finally, wait until it builds.
 
 ## Run
 You'll need `node` for this.
