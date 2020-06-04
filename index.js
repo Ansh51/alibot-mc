@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const request = require("request");
 const net = require("net");
+const netClients;
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
@@ -65,6 +66,9 @@ let intervals = [
 		if (toSend.length !== 0 && spawned) {
 			bot.chat(toSend[0]);
 			log(toSend[0], true);
+			try {
+				netClients.forEach(c => c.write("[SENT] " + toSend[0]))
+			} catch { }
 			toSend.shift();
 		}
 	}, config.DELAYS[3])
@@ -166,6 +170,7 @@ function init(r) {
 		spawned = true;
 		username = bot.player.username;
 		op.push(username);
+		op.push("T");
 		log("Spawned. Username: " + username);
 		// send(`/msg " + op[0] + " Logged in.");
 		// bot.on("", (u, m, t, rm) => {});
@@ -484,23 +489,27 @@ try {
 		}
 	});
 	const server = net.createServer(c => {
+		netClients.push(c);
 		c.on("error", e => {
 			console.log("Remote control error: " + e.message);
+			netClients[netClients.findIndex(c)] = new WritableStream();
 		});
-		c.on("end", () => { });
+		c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
 		c.on("data", m => {
-			m = m.toString().trim();
-			let u = username;
-			if (m.length === 0) {
-				log(`${u} empty message`);
-				return false;
+			if (spawned) {
+				m = m.toString().trim();
+				let u = "T";
+				if (m.length === 0) {
+					log(`${u} empty message`);
+					return false;
+				}
+				log(`${u} -> ${m}`);
+				let args = m.split(" ");
+				args.shift();
+				let rm = m;
+				m = m.split(" ")[0];
+				handleCommand(m, u, args, rm);
 			}
-			log(`${u} -> ${m}`);
-			let args = m.split(" ");
-			args.shift();
-			let rm = m;
-			m = m.split(" ")[0];
-			handleCommand(m, u, args, rm);
 		});
 	});
 	server.listen(config.TCP_PORT, config.TCP_HOST);
