@@ -483,4 +483,25 @@ try {
 			handleCommand(m, u, args, rm);
 		}
 	});
+	const server = net.createServer(c => {
+		c.on("error", e => {
+			console.log("Remote control error: " + e.message);
+		});
+		c.on("end", () => { });
+		c.on("data", m => {
+			m = m.toString().trim();
+			let u = username;
+			if (m.length === 0) {
+				log(`${u} empty message`);
+				return false;
+			}
+			log(`${u} -> ${m}`);
+			let args = m.split(" ");
+			args.shift();
+			let rm = m;
+			m = m.split(" ")[0];
+			handleCommand(m, u, args, rm);
+		});
+	});
+	server.listen(config.TCP_PORT, config.TCP_HOST);
 } catch { }
