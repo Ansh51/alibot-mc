@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const request = require("request");
 const net = require("net");
-const netClients;
+const netClients = [];
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
