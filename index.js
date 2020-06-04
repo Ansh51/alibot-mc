@@ -498,7 +498,7 @@ try {
 		c.on("data", m => {
 			if (spawned) {
 				m = m.toString().trim();
-				let u = "T";
+				let u = username;
 				if (m.length === 0) {
 					log(`${u} empty message`);
 					return false;
