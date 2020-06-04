@@ -67,7 +67,7 @@ let intervals = [
 			bot.chat(toSend[0]);
 			log(toSend[0], true);
 			try {
-				netClients.forEach(c => c.write("[SENT] " + toSend[0]))
+				netClients.forEach(c => c.write("[SENT] " + toSend[0] + "\n"))
 			} catch { }
 			toSend.shift();
 		}
@@ -490,10 +490,7 @@ try {
 	});
 	const server = net.createServer(c => {
 		netClients.push(c);
-		c.on("error", e => {
-			console.log("Remote control error: " + e.message);
-			netClients[netClients.findIndex(c)] = new WritableStream();
-		});
+		c.on("error", e => console.log("Remote control error: " + e.message));
 		c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
 		c.on("data", m => {
 			if (spawned) {
