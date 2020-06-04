@@ -2,6 +2,7 @@ const arg = require("minimist");
 const path = require("path");
 const fs = require("fs");
 const request = require("request");
+const net = require("net");
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
@@ -18,7 +19,10 @@ try {
 	config.OP = arg.o || process.env.CONF_OP || conf.OP || "AliFurkan";
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
-	config.DELAYS = delays[arg.d || process.env.CONF_DELAYS || conf.DELAYS || 1];
+	config.DELAYS = delays[+arg.d || +process.env.CONF_DELAYS || +conf.DELAYS || 1];
+	config.REMOTE = !!arg.remote || !!process.env.CONF_REMOTE || !!conf.REMOTE || false;
+	config.TCP_PORT = +arg.port || +process.env.CONF_TCP_PORT || +conf.TCP_PORT || 26354;
+	config.TCP_HOST = arg.host || process.env.CONF_TCP_HOST || conf.TCP_HOST || undefined;
 } catch (e) {
 	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
 	log("Also provide this: ");
@@ -194,7 +198,7 @@ function init(r) {
 			m = m.split(": ");
 			m.shift();
 			m = m.join(": ");
-			log(`${u} -> ${m}`);
+			u !== username ? log(`${u} -> ${m}`) : false;
 			let args = m.split(" ");
 			args.shift();
 			let oldm = m;
