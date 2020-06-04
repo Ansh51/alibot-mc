@@ -276,7 +276,7 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "ping":
 			if (args.length >= 1) {
-				msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u);
+				bot.players[args[0]] ? msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u) : msg(`Player not found.`, u);
 			} else {
 				msg(`Your ping is ${bot.players[u].ping}ms.`, u);
 			}
