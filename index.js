@@ -490,7 +490,7 @@ try {
 	});
 	const server = net.createServer(c => {
 		netClients.push(c);
-		c.on("error", e => console.log("Remote control error: " + e.message));
+		c.on("error", e => { });
 		c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
 		c.on("data", m => {
 			if (spawned) {
