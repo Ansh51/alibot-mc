@@ -21,7 +21,7 @@ try {
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
 	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
 	config.DELAYS = delays[+arg.d || +process.env.CONF_DELAYS || +conf.DELAYS || 1];
-	config.REMOTE = !!arg.remote || !!process.env.CONF_REMOTE || !!conf.REMOTE || false;
+	config.REMOTE = arg.remote || process.env.CONF_REMOTE || conf.REMOTE || false;
 	config.TCP_PORT = +arg.port || +process.env.CONF_TCP_PORT || +conf.TCP_PORT || 26354;
 	config.TCP_HOST = arg.host || process.env.CONF_TCP_HOST || conf.TCP_HOST || undefined;
 } catch (e) {
@@ -488,26 +488,28 @@ try {
 			handleCommand(m, u, args, rm);
 		}
 	});
-	const server = net.createServer(c => {
-		netClients.push(c);
-		c.on("error", e => { });
-		c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
-		c.on("data", m => {
-			if (spawned) {
-				m = m.toString().trim();
-				let u = username;
-				if (m.length === 0) {
-					log(`${u} empty message`);
-					return false;
+	if (config.REMOTE) {
+		const server = net.createServer(c => {
+			netClients.push(c);
+			c.on("error", e => { });
+			c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
+			c.on("data", m => {
+				if (spawned) {
+					m = m.toString().trim();
+					let u = username;
+					if (m.length === 0) {
+						log(`${u} empty message`);
+						return false;
+					}
+					log(`${u} -> ${m}`);
+					let args = m.split(" ");
+					args.shift();
+					let rm = m;
+					m = m.split(" ")[0];
+					handleCommand(m, u, args, rm);
 				}
-				log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm);
-			}
+			});
 		});
-	});
-	server.listen(config.TCP_PORT, config.TCP_HOST);
+		server.listen(config.TCP_PORT, config.TCP_HOST);
+	}
 } catch { }
