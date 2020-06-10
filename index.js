@@ -371,6 +371,8 @@ function handleCommand(m, u, args, rm = "") {
 				msg(`You are not an operator and the mode is ${mode}.`, u);
 			}
 			break;
+		case "shutdown":
+			op.includes(u) ? process.exit(0) : msg(`You are not an operator.`, u);;
 	}
 }
 
@@ -492,7 +494,7 @@ try {
 		const server = net.createServer(c => {
 			netClients.push(c);
 			c.on("error", e => { });
-			c.on("end", () => { netClients[netClients.findIndex(c)] = new WritableStream(); });
+			c.on("end", () => { });
 			c.on("data", m => {
 				if (spawned) {
 					m = m.toString().trim();
