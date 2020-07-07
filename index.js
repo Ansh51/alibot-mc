@@ -337,7 +337,10 @@ function handleCommand(m, u, args, rm = "") {
 			parse(u, args, false, 0, (args[2] == "true" ? true : false) || false);
 			break;
 		case "spam":
-			parse(u, args, true, parseInt(args[2]) || 0, (args[3] == "true" ? true : false) || false);
+			let delay = parseInt(args[2]) || 0;
+			let random = (args[3] == "true" ? true : false) || false;
+			let randomLen = (+parseInt(args[4]) > 0) ? +parseInt(args[4]) || 8 : 8;
+			parse(u, args, true, delay, random, randomLen);
 			break;
 		case "stopLoop":
 			if (op.includes(u)) {
@@ -372,20 +375,20 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "shutdown":
-			op.includes(u) ? process.exit(0) : msg(`You are not an operator.`, u);;
+			op.includes(u) ? process.exit(0) : msg(`You are not an operator.`, u);
 	}
 }
 
-function parse(u, args, loop = false, delay = 0, random = false) {
+function parse(u, args, loop = false, delay = 0, random = false, randomLen = 8) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadArray(fs.readFileSync(args[1]).toString().split("\n"), loop, delay, random, u) || "No output."
+						output = loadArray(fs.readFileSync(args[1]).toString().split("\n"), loop, delay, random, randomLen, u) || "No output."
 					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random, u) || "No output.";
+						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random, randomLen, u) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
@@ -419,7 +422,7 @@ function parse(u, args, loop = false, delay = 0, random = false) {
 	}
 }
 
-function loadArray(commands = [], loop, delay, random, u) {
+function loadArray(commands = [], loop, delay, random, randomLen, u) {
 	try {
 		if (loop) {
 			let date = new Date(Date.now());
@@ -429,7 +432,7 @@ function loadArray(commands = [], loop, delay, random, u) {
 				let m = commands[i % commands.length];
 				m = m.trim();
 				if (random) {
-					m += ` (${randStr("8")})`;
+					m += ` (${randStr(randomLen)})`;
 				}
 				u = u || username;
 				if (m.length === 0) {
