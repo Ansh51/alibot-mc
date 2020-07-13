@@ -1,4 +1,4 @@
-const arg = require("minimist");
+const arg = require("minimist")(process.argv.slice(2));
 const path = require("path");
 const fs = require("fs");
 const request = require("request");
@@ -7,32 +7,64 @@ const netClients = [];
 
 let config = arg;
 let envFile = path.join(__dirname, arg.e || arg.env || ".env");
-let delays = [[0 * 1000, 5 * 1000, 5 * 60 * 1000, 0.5 * 1000], [5 * 1000, 10 * 1000, 10 * 60 * 1000, 1.5 * 1000], [10 * 1000, 20 * 1000, 20 * 60 * 1000, 2.5 * 1000], [20 * 1000, 40 * 1000, 40 * 60 * 1000, 5 * 1000], [5 * 1000, 15 * 1000, 30 * 60 * 1000, 2 * 1000]];
-
-try { require("dotenv").config({ path: envFile }); } catch { }
+let delays = [
+	[0 * 1000, 5 * 1000, 5 * 60 * 1000, 0.5 * 1000],
+	[5 * 1000, 10 * 1000, 10 * 60 * 1000, 1.5 * 1000],
+	[10 * 1000, 20 * 1000, 20 * 60 * 1000, 2.5 * 1000],
+	[20 * 1000, 40 * 1000, 40 * 60 * 1000, 5 * 1000],
+	[5 * 1000, 15 * 1000, 30 * 60 * 1000, 2 * 1000],
+];
 
 try {
-	let conf = require(require("path").join(__dirname, "config.json"));
-	config.WEBSITE = arg.w || process.env.CONF_WEBSITE || conf.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/"; // You probably shouldn't change this.
+	require("dotenv").config({ path: envFile });
+} catch {}
+
+try {
+	let conf = require(path.join(__dirname, "config.json"));
+	config.WEBSITE =
+		arg.w ||
+		process.env.CONF_WEBSITE ||
+		conf.WEBSITE ||
+		"https://github.com/uAliFurkanY/alibot-mc/"; // You probably shouldn't change this.
 	config.HOST = arg.h || process.env.CONF_HOST || conf.HOST || "0b0t.org";
-	config.USERNAME = arg.u || process.env.CONF_USERNAME || conf.USERNAME || "alibot";
-	config.PASSWORD = arg.p || process.env.CONF_PASSWORD || conf.PASSWORD || false;
+	config.USERNAME =
+		arg.u || process.env.CONF_USERNAME || conf.USERNAME || "alibot";
+	config.PASSWORD =
+		arg.p || process.env.CONF_PASSWORD || conf.PASSWORD || false;
 	config.OP = arg.o || process.env.CONF_OP || conf.OP || "AliFurkan";
 	config.MODE = arg.m || process.env.CONF_MODE || conf.MODE || "public";
-	config.ACTIVE = arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
-	config.DELAYS = delays[+arg.d || +process.env.CONF_DELAYS || +conf.DELAYS || 1];
-	config.REMOTE = arg.remote || process.env.CONF_REMOTE || conf.REMOTE || false;
-	config.TCP_PORT = +arg.port || +process.env.CONF_TCP_PORT || +conf.TCP_PORT || 26354;
-	config.TCP_HOST = arg.host || process.env.CONF_TCP_HOST || conf.TCP_HOST || undefined;
+	config.ACTIVE =
+		arg.a || process.env.CONF_ACTIVE || conf.ACTIVE || "true";
+	config.DELAYS =
+		delays[+arg.d || +process.env.CONF_DELAYS || +conf.DELAYS || 1];
+	config.REMOTE =
+		arg.remote || process.env.CONF_REMOTE || conf.REMOTE || false;
+	config.TCP_PORT =
+		+arg.port || +process.env.CONF_TCP_PORT || +conf.TCP_PORT || 26354;
+	config.TCP_HOST =
+		arg.host ||
+		process.env.CONF_TCP_HOST ||
+		conf.TCP_HOST ||
+		"localhost";
 } catch (e) {
-	log("This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js.");
+	log(
+		"This error should NEVER happen. If it did, you edited/deleted 'config.json'. If you didn't, create an Issue. If you did, just use setup.js."
+	);
 	log("Also provide this: ");
 	console.log(e);
 	process.exit(1);
 }
 
-
-const isVarSet = () => !!(config.HOST && config.USERNAME && config.PASSWORD && config.OP && config.MODE && config.ACTIVE && config.DELAYS);
+const isVarSet = () =>
+	!!(
+		config.HOST &&
+		config.USERNAME &&
+		config.PASSWORD &&
+		config.OP &&
+		config.MODE &&
+		config.ACTIVE &&
+		config.DELAYS
+	);
 if (!isVarSet()) {
 	console.error("No configuration found, starting setup.");
 	require("./setup");
@@ -43,15 +75,14 @@ if (config.ACTIVE === "false") {
 }
 
 const mineflayer = require("mineflayer");
-const navigatePlugin = require('mineflayer-navigate')(mineflayer);
-const readline = require('readline');
+const navigatePlugin = require("mineflayer-navigate")(mineflayer);
+const readline = require("readline");
 const Vec3 = require("vec3");
 
 const rl = readline.createInterface({
 	input: process.stdin,
-	output: process.stdout
+	output: process.stdout,
 });
-
 
 let op = config.OP.split(",");
 log("Operators: " + op);
@@ -67,15 +98,15 @@ let intervals = [
 			bot.chat(toSend[0]);
 			log(toSend[0], true);
 			try {
-				netClients.forEach(c => c.write("[SENT] " + toSend[0] + "\n"))
-			} catch { }
+				netClients.forEach((c) =>
+					c.write("[SENT] " + toSend[0] + "\n")
+				);
+			} catch {}
 			toSend.shift();
 		}
-	}, config.DELAYS[3])
+	}, config.DELAYS[3]),
 ];
-let intervalNames = [
-	"0: MAIN MESSAGE LOOP"
-];
+let intervalNames = ["0: MAIN MESSAGE LOOP"];
 
 let session = false;
 
@@ -106,7 +137,11 @@ function isValidHttpUrl(string) {
 }
 
 function log(message, sent = false, date = new Date(Date.now())) {
-	console.log(`<${date.getHours()}:${date.getMinutes()}> ${sent ? "[SENT] " : " "} ${message}`);
+	console.log(
+		`<${date.getHours()}:${date.getMinutes()}> ${
+			sent ? "[SENT] " : " "
+		} ${message}`
+	);
 }
 
 function send(msg = "/help") {
@@ -123,23 +158,24 @@ function randStr(length) {
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	let charactersLength = characters.length;
 	for (let i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		result += characters.charAt(
+			Math.floor(Math.random() * charactersLength)
+		);
 	}
 	return result;
 }
 
 function goToSleep(u) {
 	const bed = bot.findBlock({
-		matching: block => bot.isABed(block)
-	})
+		matching: (block) => bot.isABed(block),
+	});
 	if (bed) {
 		bot.sleep(bed, (err) => {
 			if (err) {
 				msg(`I can't sleep: ${err.message}`, u);
 			} else {
-
 			}
-		})
+		});
 	} else {
 		msg(`No nearby bed`, u);
 	}
@@ -150,9 +186,8 @@ function wakeUp(u) {
 		if (err) {
 			msg(`I can't wake up: ${err.message}`, u);
 		} else {
-
 		}
-	})
+	});
 }
 
 function init(r) {
@@ -190,7 +225,10 @@ function init(r) {
 			if (op.includes(user) || mode !== "private") {
 				send(`/tpy ${user}`);
 			} else {
-				msg(`You are not an operator and the mode is ${mode}.`, user);
+				msg(
+					`You are not an operator and the mode is ${mode}.`,
+					user
+				);
 			}
 		});
 		bot.on("msg", (u, m, t, rm) => {
@@ -210,7 +248,6 @@ function init(r) {
 			m = m.split(" ")[0];
 			handleCommand(m, u, args, oldm);
 		});
-
 	}
 	bot.once("spawn", main);
 	bot._client.once("session", () => {
@@ -218,44 +255,64 @@ function init(r) {
 		login.session = session;
 	});
 	bot.once("login", () => log("Logged in."));
-	bot.once("kick", () => setTimeout(() => init("Kick"), config.DELAYS[0]));
-	bot.once("end", () => { console.log("Got 'end'!"); setTimeout(() => init("End"), config.DELAYS[1]); });
+	bot.once("kick", () =>
+		setTimeout(() => init("Kick"), config.DELAYS[0])
+	);
+	bot.once("end", () => {
+		console.log("Got 'end'!");
+		setTimeout(() => init("End"), config.DELAYS[1]);
+	});
 	bot.once("error", (m) => {
 		if (m.message === "Invalid session.") {
 			session = false;
 			init("Error " + m);
 		} else if (
-			m.message === "Invalid credentials. Invalid username or password."
+			m.message ===
+			"Invalid credentials. Invalid username or password."
 		) {
 			setTimeout(() => init("Error"), config.DELAYS[2]);
 		}
 	});
-	bot.on('sleep', () => {
+	bot.on("sleep", () => {
 		log(`SLEEPING`);
-	})
-	bot.on('wake', () => {
+	});
+	bot.on("wake", () => {
 		log(`WOKE UP`);
-	})
+	});
 }
 
 function handleCommand(m, u, args, rm = "") {
 	switch (m) {
 		case "help":
-			msg(config.WEBSITE || "https://github.com/uAliFurkanY/alibot-mc/", u);
+			msg(
+				config.WEBSITE ||
+					"https://github.com/uAliFurkanY/alibot-mc/",
+				u
+			);
 			break;
 		case "kill":
-			if (op.includes(u) ||
-				(Date.now() >= lastkill + 15 * 1000 && mode !== "private")) {
+			if (
+				op.includes(u) ||
+				(Date.now() >= lastkill + 15 * 1000 && mode !== "private")
+			) {
 				send(`/kill`);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
+				msg(
+					`Declining! You're not an operator and the mode is ${mode}.`,
+					u
+				);
 			}
 			break;
 		case "tphere":
 			if (op.includes(u) || mode === "public") {
-				args.length === 1 ? send(`/tpa ${args[0]}`) : send(`/tpa ${u}`);
+				args.length === 1
+					? send(`/tpa ${args[0]}`)
+					: send(`/tpa ${u}`);
 			} else {
-				msg(`Declining! You're not an operator and the mode is ${mode}.`, u);
+				msg(
+					`Declining! You're not an operator and the mode is ${mode}.`,
+					u
+				);
 			}
 			break;
 		case "say":
@@ -275,7 +332,10 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "coords":
 			if (op.includes(u) || mode !== "private") {
-				msg(`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`, u);
+				msg(
+					`My coords are: ${bot.player.entity.position.x} ${bot.player.entity.position.y} ${bot.player.entity.position.z}.`,
+					u
+				);
 			} else {
 				msg(`You are not an operator and the mode is ${mode}.`, u);
 			}
@@ -285,7 +345,14 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "ping":
 			if (args.length >= 1) {
-				bot.players[args[0]] ? msg(`${args[0]}'s ping is ${bot.players[args[0]].ping}ms.`, u) : msg(`Player not found.`, u);
+				bot.players[args[0]]
+					? msg(
+							`${args[0]}'s ping is ${
+								bot.players[args[0]].ping
+							}ms.`,
+							u
+					  )
+					: msg(`Player not found.`, u);
 			} else {
 				msg(`Your ping is ${bot.players[u].ping}ms.`, u);
 			}
@@ -300,7 +367,7 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "reinit":
 			if (op.includes(u)) {
-				init("reinit")
+				init("reinit");
 			} else {
 				msg(`You are not an operator.`, u);
 			}
@@ -310,10 +377,21 @@ function handleCommand(m, u, args, rm = "") {
 				msg(`Usage: random [dice|number <min> <max>]`, u);
 			} else if (args[0] === "number") {
 				if (args.length >= 4) {
-					if (parseInt(args[1]) !== NaN && parseInt(args[2]) !== NaN) {
+					if (
+						parseInt(args[1]) !== NaN &&
+						parseInt(args[2]) !== NaN
+					) {
 						let nums = [parseInt(args[1]), parseInt(args[2])];
 						if (nums[1] > nums[0]) {
-							msg(`Your random number is ${Math.floor(Math.random() * (nums[1] - nums[0] + 1)) + 1}.`, u);
+							msg(
+								`Your random number is ${
+									Math.floor(
+										Math.random() *
+											(nums[1] - nums[0] + 1)
+									) + 1
+								}.`,
+								u
+							);
 						} else {
 							msg(`Minimum is larger than maximum.`, u);
 						}
@@ -324,7 +402,12 @@ function handleCommand(m, u, args, rm = "") {
 					msg(`Usage: random [dice|number <min> <max>]`, u);
 				}
 			} else if (args[0] === "dice") {
-				msg(`You rolled ${Math.floor(Math.random() * (6 - 1 + 1)) + 1}.`, u);
+				msg(
+					`You rolled ${
+						Math.floor(Math.random() * (6 - 1 + 1)) + 1
+					}.`,
+					u
+				);
 			}
 			break;
 		case "sleep":
@@ -334,18 +417,26 @@ function handleCommand(m, u, args, rm = "") {
 			op.includes(u) ? wakeUp(u) : false;
 			break;
 		case "parse":
-			parse(u, args, false, 0, (args[2] == "true" ? true : false) || false);
+			parse(
+				u,
+				args,
+				false,
+				0,
+				(args[2] == "true" ? true : false) || false
+			);
 			break;
 		case "spam":
 			let delay = parseInt(args[2]) || 0;
 			let random = (args[3] == "true" ? true : false) || false;
-			let randomLen = (+parseInt(args[4]) > 0) ? +parseInt(args[4]) || 8 : 8;
+			let randomLen =
+				+parseInt(args[4]) > 0 ? +parseInt(args[4]) || 8 : 8;
 			parse(u, args, true, delay, random, randomLen);
 			break;
 		case "stopLoop":
 			if (op.includes(u)) {
-				clearInterval(intervals[(parseInt(args[0]) || 1)]);
-				intervalNames[intervals[(parseInt(args[0]) || 1)]] += " (stopped)";
+				clearInterval(intervals[parseInt(args[0]) || 1]);
+				intervalNames[intervals[parseInt(args[0]) || 1]] +=
+					" (stopped)";
 			} else {
 				msg(`You are not an operator.`, u);
 			}
@@ -355,9 +446,17 @@ function handleCommand(m, u, args, rm = "") {
 			break;
 		case "goto":
 			if (op.includes(u) || mode === "public") {
-				let coords = [parseInt(args[0]) || 0, parseInt(args[1]) || 0, parseInt(args[2]) || 0];
+				let coords = [
+					parseInt(args[0]) || 0,
+					parseInt(args[1]) || 0,
+					parseInt(args[2]) || 0,
+				];
 				msg(`Going to: ${coords.join(" ")}.`, u);
-				try { bot.navigate.to(new Vec3(coords[0], coords[1], coords[2])); } catch (e) {
+				try {
+					bot.navigate.to(
+						new Vec3(coords[0], coords[1], coords[2])
+					);
+				} catch (e) {
 					msg(`An error occured. See: ${e.message}.`, u);
 				}
 			} else {
@@ -367,7 +466,9 @@ function handleCommand(m, u, args, rm = "") {
 		case "cancelGoto":
 			if (op.includes(u) || mode === "public") {
 				msg(`OK. Stopping...`, u);
-				try { bot.navigate.stop(); } catch (e) {
+				try {
+					bot.navigate.stop();
+				} catch (e) {
 					msg(`An error occured. See: ${e.message}.`, u);
 				}
 			} else {
@@ -375,27 +476,61 @@ function handleCommand(m, u, args, rm = "") {
 			}
 			break;
 		case "shutdown":
-			op.includes(u) ? process.exit(0) : msg(`You are not an operator.`, u);
+			op.includes(u)
+				? process.exit(0)
+				: msg(`You are not an operator.`, u);
 	}
 }
 
-function parse(u, args, loop = false, delay = 0, random = false, randomLen = 8) {
+function parse(
+	u,
+	args,
+	loop = false,
+	delay = 0,
+	random = false,
+	randomLen = 8
+) {
 	if (op.includes(u)) {
 		if (args[0] === "web" || args[0] === "file") {
 			if (args[1]) {
 				if (args[0] === "file") {
 					let output = "";
 					if (fs.existsSync(args[1])) {
-						output = loadArray(fs.readFileSync(args[1]).toString().split("\n"), loop, delay, random, randomLen, u) || "No output."
-					} else if (fs.existsSync(path.join(__dirname, args[1]))) {
-						output = loadArray(fs.readFileSync(path.join(__dirname, args[1])).toString().split("\n"), loop, delay, random, randomLen, u) || "No output.";
+						output =
+							loadArray(
+								fs
+									.readFileSync(args[1])
+									.toString()
+									.split("\n"),
+								loop,
+								delay,
+								random,
+								randomLen,
+								u
+							) || "No output.";
+					} else if (
+						fs.existsSync(path.join(__dirname, args[1]))
+					) {
+						output =
+							loadArray(
+								fs
+									.readFileSync(
+										path.join(__dirname, args[1])
+									)
+									.toString()
+									.split("\n"),
+								loop,
+								delay,
+								random,
+								randomLen,
+								u
+							) || "No output.";
 					} else {
 						return msg(`Specified file doesn't exist.`, u);
 					}
 					msg(`Done: ${output}`, u);
 					log(output);
-				}
-				else if (args[0] === "web") {
+				} else if (args[0] === "web") {
 					if (isValidHttpUrl(args[1])) {
 						request(args[1], (e, r, b) => {
 							let output = "";
@@ -403,7 +538,13 @@ function parse(u, args, loop = false, delay = 0, random = false, randomLen = 8) 
 								console.log(e);
 								output = e.message;
 							}
-							loadArray(b.toString().split("\n"), loop, delay, random, u);
+							loadArray(
+								b.toString().split("\n"),
+								loop,
+								delay,
+								random,
+								u
+							);
 							msg(`Done: ${output}`, u);
 							log(output);
 						});
@@ -448,26 +589,32 @@ function loadArray(commands = [], loop, delay, random, randomLen, u) {
 				i++;
 			}, delay);
 			intervals.push(interval);
-			intervalNames.push(`${intervals.length - 1}: <${date.getHours()}:${date.getMinutes()}> ${u}`);
+			intervalNames.push(
+				`${
+					intervals.length - 1
+				}: <${date.getHours()}:${date.getMinutes()}> ${u}`
+			);
 			return intervals.length - 1;
 		} else {
-			return commands.map(m => {
-				m = m.trim();
-				if (random) {
-					m += ` (${randStr("8")})`;
-				}
-				u = u || username;
-				if (m.length === 0) {
-					log(`${u} empty message`);
-					return false;
-				}
-				log(`${u} -> ${m}`);
-				let args = m.split(" ");
-				args.shift();
-				let rm = m;
-				m = m.split(" ")[0];
-				handleCommand(m, u, args, rm);
-			}).length + " command(s) ran.";
+			return (
+				commands.map((m) => {
+					m = m.trim();
+					if (random) {
+						m += ` (${randStr("8")})`;
+					}
+					u = u || username;
+					if (m.length === 0) {
+						log(`${u} empty message`);
+						return false;
+					}
+					log(`${u} -> ${m}`);
+					let args = m.split(" ");
+					args.shift();
+					let rm = m;
+					m = m.split(" ")[0];
+					handleCommand(m, u, args, rm);
+				}).length + " command(s) ran."
+			);
 		}
 	} catch (e) {
 		return e.message;
@@ -493,12 +640,12 @@ try {
 			handleCommand(m, u, args, rm);
 		}
 	});
-	if (config.REMOTE) {
-		const server = net.createServer(c => {
+	if (config.REMOTE == true) {
+		const server = net.createServer((c) => {
 			netClients.push(c);
-			c.on("error", e => { });
-			c.on("end", () => { });
-			c.on("data", m => {
+			c.on("error", (e) => {});
+			c.on("end", () => {});
+			c.on("data", (m) => {
 				if (spawned) {
 					m = m.toString().trim();
 					let u = username;
@@ -517,4 +664,4 @@ try {
 		});
 		server.listen(config.TCP_PORT, config.TCP_HOST);
 	}
-} catch { }
+} catch {}
